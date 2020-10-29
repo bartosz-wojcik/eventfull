@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth.forms import AuthenticationForm
 from datetime import datetime
 
 # Create your views here.
@@ -13,8 +14,6 @@ def advanced_search(request):
 def register(request):
     return HttpResponse("Register your account for more Eventfull features!")
 
-def login(request):
-    return HttpResponse("Log into your account!")
 
 def password_recovery(request):
     return HttpResponse("Recover your password!")

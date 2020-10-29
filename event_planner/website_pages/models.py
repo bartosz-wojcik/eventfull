@@ -1,30 +1,30 @@
 from django.db import models
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
-from django import forms
+
+USER_TYPES = (
+    ('u', 'user'),
+    ('p', 'promoter'),
+)
 
 
-class Categories(models.Model):
+class Category(models.Model):
     name = models.CharField(max_length=80),
-    created_on = models.DateField()
-    modified_on = models.DateField();
-
-# class User(models.Model):
-#     type = (
-#         ('u', 'user'),
-#         ('p', 'promoter'),
-#     )
-#     first_name = models.CharField(max_length=40),
-#     last_name = models.CharField(max_length=40),
-#     email = models.EmailField(max_length=254),
-#
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
 
+# inheriting from built in abstract user that has all the fields already defined
+class UserProfile(AbstractUser):
+    user_type = models.CharField(max_length=1, choices=USER_TYPES, default=USER_TYPES[0][0], blank=False, null=False)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
 
-class Events(models.Model):
-    CategoryId = models.ForeignKey(Categories, related_name='id'),
-    name = models.CharField(max_length=40),
-    date = models.DateField()
+# class Events(models.Model):
+#     CategoryId = models.ForeignKey(Category, related_name='id'),
+#     name = models.CharField(max_length=40, ),
+#     date = models.DateField()
+
+
 
 
 

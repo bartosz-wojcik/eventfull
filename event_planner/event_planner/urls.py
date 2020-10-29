@@ -15,7 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from website_pages.views import welcome, advanced_search, register, login, password_recovery, change_password,\
+from django.contrib.auth import views as auth_views
+
+from website_pages.views import welcome
+from website_pages.views import advanced_search, register, password_recovery, change_password,\
     user_logged_in, edit_profile, delete_profile, notifications, purchase_tickets, checkout, promoter, create_event, \
     view_events, delete_event, update_event, create_promotion, view_promotions, delete_promotion, update_promotion, \
     view_reports
@@ -24,9 +27,9 @@ from website_pages.views import welcome, advanced_search, register, login, passw
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', welcome),
+    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('advanced_search', advanced_search),
     path('register', register),
-    path('login', login),
     path('register', register),
     path('password_recovery', password_recovery),
     path('change_password', change_password),

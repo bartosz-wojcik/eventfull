@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# supposing you put it in event_planner/website_pages/models.py
+AUTH_USER_MODEL = "website_pages.UserProfile"
 
 # Application definition
 
@@ -38,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'website_pages'
+
 ]
 
 MIDDLEWARE = [
@@ -51,6 +54,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'event_planner.urls'
+
+LOGIN_REDIRECT_URL = "/"
 
 TEMPLATES = [
     {
