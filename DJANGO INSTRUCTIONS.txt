@@ -1,0 +1,48 @@
+Django instructions 
+
+CREATE PROJECT 
+
+- > new project -> venv project 
+
+-> terminal -> python -m pip install django
+
+-> django-admin startproject [name]
+
+-> cd [name]
+
+-> python manage.py runserver
+
+START APP -> mark directory as root source - HELPS DJANGO UNDERSTAND STRUCTURE
+
+DO ONCE -> right click [name] top level folder, 
+
+-> in [name] folder -> python manage.py startapp website
+
+-> add app [name] to INSTALLED_APPS
+
+-> urls.py -> import module (e.g from website.views import welcome) add url map for app (- path('welcome.html, welcome) -) 
+
+-> python manage.py runserver
+
+MIGRATIONS
+
+python manage.py showmigrations -> SHOW MIGRATIONS
+
+python manage.py migrate -> MAKE MIGRATION
+
+python manage.py dbshell -> CHECK DB
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
