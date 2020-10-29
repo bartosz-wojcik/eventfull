@@ -8,7 +8,7 @@ USER_TYPES = (
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=80),
+    name = models.CharField(max_length=80, default="empty")
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
