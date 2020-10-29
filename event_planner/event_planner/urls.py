@@ -18,10 +18,26 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 
 from website_pages.views import welcome
-from website_pages.views import advanced_search, register, password_recovery, change_password,\
-    user_logged_in, edit_profile, delete_profile, notifications, purchase_tickets, checkout, promoter, create_event, \
-    view_events, delete_event, update_event, create_promotion, view_promotions, delete_promotion, update_promotion, \
-    view_reports
+from website_pages.views import advanced_search
+from website_pages.views import register
+from website_pages.views import password_recovery
+from website_pages.views import user_logged_in
+from website_pages.views import edit_profile
+from website_pages.views import delete_profile
+from website_pages.views import notifications
+from website_pages.views import purchase_tickets
+from website_pages.views import checkout
+from website_pages.views import promoter
+from website_pages.views import create_event
+from website_pages.views import view_events
+from website_pages.views import delete_event
+from website_pages.views import update_event
+from website_pages.views import create_promotion
+from website_pages.views import view_promotions
+from website_pages.views import view_reports
+from website_pages.views import delete_promotion
+from website_pages.views import update_promotion
+from website_pages.views import change_password
 
 
 urlpatterns = [
