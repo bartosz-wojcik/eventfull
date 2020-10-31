@@ -6,6 +6,10 @@ USER_TYPES = (
     ('p', 'promoter'),
 )
 
+EVENT_TYPES = (
+    ('f', 'free'),
+    ('p', 'paid'),
+)
 
 class Category(models.Model):
     name = models.CharField(max_length=80, default="empty")
@@ -27,8 +31,8 @@ class Event(models.Model):
     description = models.CharField(max_length=400)
     venue_name = models.CharField(max_length=200)
     performer_names = models.CharField(max_length=400)
-    ticket_price = models.DecimalField(max_digits=6, decimal_places=2)
-    ticket_quantity = models.IntegerField()
+    ticket_price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    ticket_quantity = models.IntegerField(null=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     created = models.DateTimeField(auto_now_add=True)
