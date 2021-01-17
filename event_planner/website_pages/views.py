@@ -1,7 +1,7 @@
 
 from django.http import HttpResponse
 from website_pages.forms import SignUpForm
-from django.contrib.auth import authenticate, login as dj_login
+from django.contrib.auth import authenticate, login as dj_login, logout
 from django.shortcuts import render, redirect
 from website_pages.forms import CustomUserCreationForm
 from django.contrib.auth import get_user_model
@@ -27,6 +27,12 @@ def login(request):
     else:
         form = SignUpForm()
     return render(request, 'login.html', {'form': form})
+
+# def logout(request):
+#     print("in here")
+#     if user_logged_in(request):
+#         logout(request)
+#     return redirect('home')
 
 # user registration
 def register(request):
