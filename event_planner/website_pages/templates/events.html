@@ -1,0 +1,19 @@
+<table>
+    <tr>
+        <th>Events</th>
+    </tr>
+    {% for item in events %}
+
+    <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.venue_name }}</td>
+        <td>{{ item.performer_names }}</td>
+        <td>{{ item.ticket_price }}</td>
+        <td>{{ item.start_date }}</td>
+        <td>{{ item.end_date }}</td>
+    </tr>
+
+
+    {% endfor %}
+</table>

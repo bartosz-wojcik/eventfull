@@ -16,37 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
-
-from website_pages.views import welcome
-from website_pages.views import advanced_search
-from website_pages.views import register
-from website_pages.views import password_recovery
-from website_pages.views import user_logged_in
-from website_pages.views import edit_profile
-from website_pages.views import delete_profile
-from website_pages.views import notifications
-from website_pages.views import purchase_tickets
-from website_pages.views import checkout
-from website_pages.views import promoter
-from website_pages.views import create_event
-from website_pages.views import view_events
-from website_pages.views import delete_event
-from website_pages.views import update_event
-from website_pages.views import create_promotion
-from website_pages.views import view_promotions
-from website_pages.views import view_reports
-from website_pages.views import delete_promotion
-from website_pages.views import update_promotion
-from website_pages.views import change_password
-
+from website_pages.views import *
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', welcome),
+    path('', home, name='home'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    url('signup/', register, name='register'),
     path('advanced_search', advanced_search),
-    path('register', register),
-    path('register', register),
     path('password_recovery', password_recovery),
     path('change_password', change_password),
     path('user_logged_in', user_logged_in),

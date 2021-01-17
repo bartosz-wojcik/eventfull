@@ -1,14 +1,19 @@
-from django.shortcuts import render
+
 from django.http import HttpResponse
-from django.contrib.auth.forms import AuthenticationForm
-from datetime import datetime
-from django.contrib.auth import login, authenticate
-from django.shortcuts import render, redirect
 from website_pages.forms import SignUpForm
+from django.contrib.auth import authenticate, login as dj_login
+from django.shortcuts import render, redirect
+from website_pages.forms import CustomUserCreationForm
+from django.contrib.auth import get_user_model
+User = get_user_model()
+from website_pages.models import Event
+
 
 
 # Create your views here.
-def signup(request):
+
+# login user
+def login(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -17,23 +22,39 @@ def signup(request):
             user.save()
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
-            login(request, user)
+            dj_login(request, user)
             return redirect('home')
     else:
         form = SignUpForm()
+    return render(request, 'login.html', {'form': form})
+
+# user registration
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            dj_login(request, user)
+            return redirect('home')
+    else:
+        form = CustomUserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
 
+def home(request):
+    if request.method == 'POST':
+        query = request.POST.get('event-name', None)
+        events = Event.objects.filter(name=query)
+    else:
+        events = Event.objects.all()
+    return render(request, 'base.html', {'events': events})
 
-def welcome(request):
-    return HttpResponse("Welcome to Eventfull! Hamiltons ON-GOING events."
-                        " All events cancelled due to Coronavirus public safety measures")
 
 def advanced_search(request):
     return HttpResponse("Perform an advanced search on ")
-
-def register(request):
-    return HttpResponse("Register your account for more Eventfull features!")
 
 
 def password_recovery(request):
