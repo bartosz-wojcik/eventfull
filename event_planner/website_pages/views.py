@@ -1,38 +1,30 @@
 
 from django.http import HttpResponse
-from website_pages.forms import SignUpForm
 from django.contrib.auth import authenticate, login as dj_login, logout
 from django.shortcuts import render, redirect
 from website_pages.forms import CustomUserCreationForm
-from django.contrib.auth import get_user_model
-User = get_user_model()
-from website_pages.models import Event
+from website_pages.models import Event, UserProfile
 
 
 
 # Create your views here.
 
-# login user
-def login(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.refresh_from_db()  # load the profile instance created by the signal
-            user.save()
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=user.username, password=raw_password)
-            dj_login(request, user)
-            return redirect('home')
-    else:
-        form = SignUpForm()
-    return render(request, 'login.html', {'form': form})
-
-# def logout(request):
-#     print("in here")
-#     if user_logged_in(request):
-#         logout(request)
-#     return redirect('home')
+# # login user
+# def login(request):
+#     if request.method == 'POST':
+#         form = SignUpForm(request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             user.refresh_from_db()  # load the profile instance created by the signal
+#             user.save()
+#             raw_password = form.cleaned_data.get('password1')
+#             user = authenticate(username=user.username, password=raw_password)
+#             dj_login(request, user)
+#             print("heya")
+#             return redirect('home')
+#     else:
+#         form = SignUpForm()
+#     return render(request, 'login.html', {'form': form})
 
 # user registration
 def register(request):
@@ -51,12 +43,19 @@ def register(request):
 
 
 def home(request):
-    if request.method == 'POST':
-        query = request.POST.get('event-name', None)
-        events = Event.objects.filter(name=query)
+    # print(UserProfile.objects.get(user_type="user"))
+    if UserProfile.user_type == "promoter":
+
+        if request.method == 'POST':
+            return render(request, 'promoter.html')
     else:
-        events = Event.objects.all()
-    return render(request, 'base.html', {'events': events})
+        if request.method == 'POST':
+            query = request.POST.get('event-name', None)
+            events = Event.objects.filter(name=query)
+        else:
+            events = Event.objects.all()
+        return render(request, 'base.html', {'events': events})
+
 
 
 def advanced_search(request):
