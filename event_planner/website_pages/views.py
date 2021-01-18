@@ -43,10 +43,14 @@ def register(request):
 
 
 def home(request):
-    # print(UserProfile.objects.get(user_type="user"))
-    if UserProfile.user_type == "promoter":
 
-        if request.method == 'POST':
+    if user_logged_in(request):
+
+        username = request.user
+        query = UserProfile.objects.get(username=username)
+        print(query.user_type)
+
+        if query.user_type == "p":
             return render(request, 'promoter.html')
     else:
         if request.method == 'POST':
