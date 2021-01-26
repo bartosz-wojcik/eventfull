@@ -49,7 +49,7 @@ def home(request):
         query = UserProfile.objects.get(username=username)
 
         if query.user_type == "p":
-            return render(request, 'promoter.html')
+            return redirect('promoter')
 
         if query.user_type == "u":
             print("yes")
