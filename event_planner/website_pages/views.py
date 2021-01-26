@@ -44,20 +44,25 @@ def register(request):
 
 def home(request):
 
-    if user_logged_in(request):
-
+    if request.user.is_authenticated:
         username = request.user
         query = UserProfile.objects.get(username=username)
-        print(query.user_type)
 
         if query.user_type == "p":
             return render(request, 'promoter.html')
-    else:
-        if request.method == 'POST':
-            query = request.POST.get('event-name', None)
-            events = Event.objects.filter(name=query)
-        else:
+
+        if query.user_type == "u":
+            print("yes")
             events = Event.objects.all()
+            return render(request, 'base.html', {'events': events})
+
+    else:
+        # if request.method == 'POST':
+        #     query = request.POST.get('event-name', None)
+        #     events = Event.objects.filter(name=query)
+        #     return render(request, 'base.html', {'events': events})
+        # else:
+        events = Event.objects.all()
         return render(request, 'base.html', {'events': events})
 
 
@@ -91,7 +96,19 @@ def checkout(request):
     return HttpResponse("See your notifcations!")
 
 def promoter(request):
-    return HttpResponse("Promoter has logged in!")
+
+    if request.user.is_authenticated:
+
+        username = request.user
+        query = UserProfile.objects.get(username=username)
+
+        if query.user_type == "p":
+            events = Event.objects.filter(promoter=username)
+            return render(request, 'promoter.html', {'events': events})
+        else:
+            events = Event.objects.all()
+            return render(request, 'base.html', {'events': events})
+
 
 def create_event(request):
     return HttpResponse("Create an event!")
