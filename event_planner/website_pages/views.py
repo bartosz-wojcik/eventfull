@@ -2,9 +2,9 @@
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login as dj_login, logout
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
 from website_pages.models import Event, UserProfile
-
 
 
 # Create your views here.
@@ -49,12 +49,11 @@ def home(request):
         query = UserProfile.objects.get(username=username)
 
         if query.user_type == "p":
-            return redirect('promoter')
+            return render(request,'promoter.html')
 
         if query.user_type == "u":
-            print("yes")
             events = Event.objects.all()
-            return render(request, 'base.html', {'events': events})
+            return render(request, 'base.html', {'events': events, 'type': 'user'})
 
     else:
         # if request.method == 'POST':
@@ -63,7 +62,7 @@ def home(request):
         #     return render(request, 'base.html', {'events': events})
         # else:
         events = Event.objects.all()
-        return render(request, 'base.html', {'events': events})
+        return render(request, 'base.html', {'events': events, 'type': 'user'})
 
 
 
@@ -98,37 +97,72 @@ def checkout(request):
 def promoter(request):
 
     if request.user.is_authenticated:
-
         username = request.user
         query = UserProfile.objects.get(username=username)
 
-        if query.user_type == "p":
-            events = Event.objects.filter(promoter=username)
-            return render(request, 'promoter.html', {'events': events})
-        else:
-            events = Event.objects.all()
-            return render(request, 'base.html', {'events': events})
+        if not query.user_type == "p":
+            return redirect('home')
+    else:
+        return redirect('home')
 
 
 def create_event(request):
     return HttpResponse("Create an event!")
 
-def view_events(request):
-    return HttpResponse("View your events!")
+def promoter_view(request):
+    if request.user.is_authenticated:
+
+        username = request.user
+        print(username.id)
+        query = UserProfile.objects.get(username=username)
+
+        if query.user_type == "p":
+            events = Event.objects.filter(promoter=username)
+            return render(request, 'promoter_view.html', {'events': events, 'type': 'promoter'})
+        else:
+            return redirect('home')
 
 def delete_event(request):
     return HttpResponse("Delete an event!")
 
-def update_event(request):
-    return HttpResponse("Update an event!")
+def edit_event(request, id):
+    events = Event.objects.filter(id=id)
+    return render(request, 'promoter_edit.html', {'events': events, 'type': 'edit'})
+
+@csrf_protect
+def edited_event(request):
+    if request.method == 'POST':
+        id = request.POST["pk"]
+        event_name = request.POST["event-name"]
+        description = request.POST["description"]
+        venue_name = request.POST["venue-name"]
+        performer_names = request.POST["performer-names"]
+        ticket_price = request.POST["ticket-price"]
+        ## DATES ARE KILLING ME AND TIME!!!!!!
+        ## FUCK DATE FORMATS IN GENERAL!!
+        # start_date = request.POST["start-date"]
+        # end_date = request.POST["end-date"]
+
+        # update the event
+        update = Event.objects.get(id=id)
+        update.description = description
+        update.venue_name = venue_name
+        update.performer_names = performer_names
+        update.ticket_price = ticket_price
+        update.save()
+
+    return redirect('home')
+
+def delete_promotion(request):
+    if request.method == 'POST':
+        id = request.POST["pk"]
+
+    return redirect('home')
 
 def create_promotion(request):
     return HttpResponse("Create a promotion!")
 
 def view_promotions(request):
-    return HttpResponse("View promotions!")
-
-def delete_promotion(request):
     return HttpResponse("View promotions!")
 
 def update_promotion(request):

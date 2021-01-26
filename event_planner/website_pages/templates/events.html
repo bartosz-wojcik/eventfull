@@ -2,8 +2,24 @@
     <tr>
         <th>Events</th>
     </tr>
+    {% if type == 'promoter'  %}
     {% for item in events %}
+    <tr>
+        <td>{{ item.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.venue_name }}</td>
+        <td>{{ item.performer_names }}</td>
+        <td>{{ item.ticket_price }}</td>
+        <td>{{ item.start_date }}</td>
+        <td>{{ item.end_date }}</td>
+        <td><a href="edit_event/{{ item.pk }}" >Edit</a></td>
+        <td><a href="delete_event/{{ item.pk }}" >Delete</a></td>
+    </tr>
+    {% endfor %}
+    {% endif %}
 
+    {% if type == 'user'  %}
+    {% for item in events %}
     <tr>
         <td>{{ item.name }}</td>
         <td>{{ item.description }}</td>
@@ -13,7 +29,8 @@
         <td>{{ item.start_date }}</td>
         <td>{{ item.end_date }}</td>
     </tr>
-
-
     {% endfor %}
+    {% endif %}
+
+
 </table>

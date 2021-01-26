@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='base.html'), {'next_page': ''}),
+    path('logout/', auth_views.LogoutView.as_view(template_name='base.html')),
     path('signup/', register, name='register'),
     path('advanced_search', advanced_search),
     path('password_recovery', password_recovery),
@@ -35,15 +35,16 @@ urlpatterns = [
     path('checkout', checkout),
     path('promoter/', promoter, name='promoter'),
     path('create_event', create_event),
-    path('view_events', view_events),
-    path('delete_event', delete_event),
-    path('update_event', update_event),
+    path('promoter_view', promoter_view),
+    path('delete_event/<int:id>', delete_event),
+    path('deleted_event/', deleted_event),
+    path('edit_event/<int:id>/', edit_event, name="edit_event"),
+    path('edited_event/', edited_event, name="edited_event"),
     path('create_promotion', create_promotion),
     path('view_promotions', view_promotions),
     path('delete_promotion', delete_promotion),
     path('update_promotion', update_promotion),
     path('view_reports', view_reports),
-
 ]
 
 

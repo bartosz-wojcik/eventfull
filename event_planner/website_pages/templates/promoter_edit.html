@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventfull - Promoter Edit Event</title>
+</head>
+<body>
+
+{% block content %}
+
+{% if user.is_authenticated  %}
+<a href="/logout">Logout</a>
+{% endif %}
+
+
+
+    {% for item in events %}
+    <form method="post" action="{% url 'edited_event'%}">
+        {% csrf_token %}
+        <br />
+        <input value="{{ item.name }}" name="event-name">
+        <br />
+        <textarea rows="4" cols="50" name="description">{{ item.description }}</textarea>
+        <br />
+        <input value="{{ item.venue_name }}" name="venue-name">
+        <br />
+        <input value="{{ item.performer_names }}" name="performer-names">
+        <br />
+        <input type="number" value="{{ item.ticket_price }}" name="ticket-price">
+        <br />
+<!--        <input type="datetime" value="{{ item.start_date }}" name="start-date">-->
+<!--        <br />-->
+<!--        <input type="datetime" value="{{ item.end_date }}" name="end-date">-->
+<!--        <br />-->
+        <input type="hidden" value="{{ item.pk }}" name="pk">
+        <br />
+        <input type="submit" value="Submit">
+    </form>
+    {% endfor %}
+
+{% include "scripts.html" %}
+<script>
+    $(document).ready(function(){
+    });
+</script>
+{% endblock %}
+
+</body>
+
+</html>
