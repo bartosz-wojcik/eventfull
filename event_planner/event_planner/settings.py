@@ -56,6 +56,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'event_planner.urls'
 
 LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
 TEMPLATES = [
     {
