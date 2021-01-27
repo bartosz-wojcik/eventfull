@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventfull - Promoter Delete Event</title>
+</head>
+<body>
+    {% if user.is_authenticated  %}
+    <a href="/logout">Logout</a>
+    {% endif %}
+
+   <h1>Create an Event</h1>
+   <form method="post" action="{% url 'created_event'%}">
+        {% csrf_token %}
+        <br />
+       <label for="event-name">Venue Name</label>
+        <input  type="text"  name="event-name" required>
+        <br />
+       <label for="category">Category Name</label>
+       <select name="category-name" id="categories">
+        {% for item in categories %}
+             <option value="{{item.name}}">{{item.name}}</option>
+        {% endfor %}
+       </select>
+        <br />
+       <label for="description">Description</label>
+        <textarea type="text"  rows="4" cols="50" name="description" required></textarea>
+        <br />
+       <label for="venue-name">Venue Name</label>
+        <input type="text"   name="venue-name" required>
+        <br />
+       <label for="performer-names">Performer Names</label>
+        <input type="text" name="performer-names" required>
+        <br />
+          <label for="ticket-quantity">Ticket Quantity (Empty for free event)</label>
+        <input type="number" name="ticket-quantity">
+        <br />
+        <label for="ticket-price">Ticket Price (Empty for free event)</label>
+        <input type="number" name="ticket-price" step=".01">
+        <br />
+        <label for="start-date">Start Date</label>
+        <input type="datetime-local" name="start-date" required>
+        <br />
+       <label for="end-date">End Date</label>
+        <input type="datetime-local" name="end-date" required>
+        <br />
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+</html>

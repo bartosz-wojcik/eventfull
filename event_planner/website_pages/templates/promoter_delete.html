@@ -2,9 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Eventfull - Promoter Delete Event</title>
 </head>
 <body>
+
+{% block content %}
+
+    {% if user.is_authenticated  %}
+    <a href="/logout">Logout</a>
+    {% endif %}
+
+    {% for item in events %}
+    <form method="post" action="{% url 'deleted_event'%}">
+        {% csrf_token %}
+        <p> Do you want to delete the following event?</p>
+        <br />
+        <input value="{{ item.name }}" value="{{ item.name }}" name="event-name" readonly>
+         <br />
+        <input  name="start" value="{{ item.start_date }}" readonly>
+         <br />
+        <input  name="end" value="{{ item.end_date }}" readonly>
+        <br />
+        <input type="hidden" value="{{ item.pk }}" name="pk">
+         <br />
+        <input type="submit" value="Delete">
+    </form>
+    {% endfor %}
+
+{% include "scripts.html" %}
+
+<script>
+    $(document).ready(function(){
+    });
+</script>
+{% endblock %}
 
 </body>
 </html>

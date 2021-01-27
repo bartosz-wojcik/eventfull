@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login as dj_login, logout
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
-from website_pages.models import Event, UserProfile
+from website_pages.models import Event, UserProfile, Category
 
 
 # Create your views here.
@@ -107,7 +107,43 @@ def promoter(request):
 
 
 def create_event(request):
-    return HttpResponse("Create an event!")
+
+    categories = Category.objects.all()
+    return render(request, 'promoter_create.html', {'categories': categories})
+
+def created_event(request):
+    if request.method == 'POST':
+        username = request.user
+
+        event_name = request.POST["event-name"]
+        category = request.POST["category-name"]
+        description = request.POST["description"]
+        venue_name = request.POST["venue-name"]
+        performer_names = request.POST["performer-names"]
+        ticket_price = request.POST["ticket-price"]
+        ticket_quantity = request.POST["ticket-quantity"]
+        start_date = request.POST["start-date"]
+        end_date = request.POST["end-date"]
+
+
+        category = Category.objects.get(name=category)
+        print(category.id)
+
+        create = Event(
+            name=event_name,
+            description=description,
+            promoter = UserProfile.objects.get(id=username.id),
+            category=Category.objects.get(id=category.id),
+            venue_name=venue_name,
+            performer_names=performer_names,
+            ticket_price=ticket_price,
+            ticket_quantity=ticket_quantity,
+            start_date=start_date,
+            end_date=end_date)
+
+        create.save()
+
+    return redirect('home')
 
 def promoter_view(request):
     if request.user.is_authenticated:
@@ -122,8 +158,15 @@ def promoter_view(request):
         else:
             return redirect('home')
 
-def delete_event(request):
-    return HttpResponse("Delete an event!")
+def delete_event(request, id):
+    events = Event.objects.filter(id=id)
+    return render(request, 'promoter_delete.html', {'events': events, 'type': 'edit'})
+
+def deleted_event(request):
+    if request.method == 'POST':
+        id = request.POST["pk"]
+        Event.objects.filter(id=id).delete()
+    return redirect('home')
 
 def edit_event(request, id):
     events = Event.objects.filter(id=id)
@@ -145,6 +188,7 @@ def edited_event(request):
 
         # update the event
         update = Event.objects.get(id=id)
+        update.name = event_name
         update.description = description
         update.venue_name = venue_name
         update.performer_names = performer_names
