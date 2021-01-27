@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login as dj_login, logout
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
-from website_pages.models import Event, UserProfile, Category
+from website_pages.models import Event, UserProfile, Category, Promotion
 
 
 # Create your views here.
@@ -43,26 +43,32 @@ def register(request):
 
 
 def home(request):
+    if request.user.is_authenticated and request.method == 'POST':
+        query = request.POST.get('event-name', None)
+        events = Event.objects.filter(name=query)
+        return render(request, 'base.html', {'events': events, 'type': 'user'})
 
-    if request.user.is_authenticated:
+    elif request.user.is_authenticated:
         username = request.user
-        query = UserProfile.objects.get(username=username)
+        query = UserProfile.objects.get(id=username.id)
 
         if query.user_type == "p":
-            return render(request,'promoter.html')
+            return render(request, 'promoter.html')
 
         if query.user_type == "u":
             events = Event.objects.all()
             return render(request, 'base.html', {'events': events, 'type': 'user'})
 
     else:
-        # if request.method == 'POST':
-        #     query = request.POST.get('event-name', None)
-        #     events = Event.objects.filter(name=query)
-        #     return render(request, 'base.html', {'events': events})
-        # else:
-        events = Event.objects.all()
-        return render(request, 'base.html', {'events': events, 'type': 'user'})
+        print('heyaads')
+        if request.method == 'POST':
+            print('hujjj')
+            query = request.POST.get('event-name', None)
+            events = Event.objects.filter(name=query)
+            return render(request, 'base.html', {'events': events, 'type': 'user'})
+        else:
+            events = Event.objects.all()
+            return render(request, 'base.html', {'events': events, 'type': 'user'})
 
 
 
@@ -149,7 +155,6 @@ def promoter_view(request):
     if request.user.is_authenticated:
 
         username = request.user
-        print(username.id)
         query = UserProfile.objects.get(username=username)
 
         if query.user_type == "p":
@@ -181,10 +186,8 @@ def edited_event(request):
         venue_name = request.POST["venue-name"]
         performer_names = request.POST["performer-names"]
         ticket_price = request.POST["ticket-price"]
-        ## DATES ARE KILLING ME AND TIME!!!!!!
-        ## FUCK DATE FORMATS IN GENERAL!!
-        # start_date = request.POST["start-date"]
-        # end_date = request.POST["end-date"]
+        start_date = request.POST["start-date"]
+        end_date = request.POST["end-date"]
 
         # update the event
         update = Event.objects.get(id=id)
@@ -193,24 +196,81 @@ def edited_event(request):
         update.venue_name = venue_name
         update.performer_names = performer_names
         update.ticket_price = ticket_price
+        update.start_date = start_date
+        update.end_date = end_date
         update.save()
 
     return redirect('home')
 
-def delete_promotion(request):
+def delete_promotion(request, id):
+    promotion = Promotion.objects.filter(id=id)
+    return render(request, 'delete_promotion.html', {'promotion': promotion})
+
+def deleted_promotion(request):
     if request.method == 'POST':
         id = request.POST["pk"]
+        Promotion.objects.filter(id=id).delete()
+    return redirect('home')
+
+
+def create_promotion(request):
+    username = request.user
+    events = Event.objects.filter(promoter=username.id)
+    return render(request, 'create_promotion.html', {'events': events})
+
+def created_promotion(request):
+
+    if request.method == 'POST':
+        username = request.user
+
+        event_name = request.POST["event-name"]
+        description = request.POST["description"]
+        promotion_code = request.POST["promotion-code"]
+        start_date = request.POST["start-date"]
+        end_date = request.POST["end-date"]
+
+        event = Event.objects.get(name=event_name)
+        print(event.id)
+
+        create = Promotion(
+            promo_code=promotion_code,
+            description=description,
+            promoter = UserProfile.objects.get(id=username.id),
+            event=Event.objects.get(id=event.id),
+            start_date=start_date,
+            end_date=end_date)
+
+        create.save()
 
     return redirect('home')
 
-def create_promotion(request):
-    return HttpResponse("Create a promotion!")
-
 def view_promotions(request):
-    return HttpResponse("View promotions!")
 
-def update_promotion(request):
-    return HttpResponse("View promotions!")
+    if request.user.is_authenticated:
+        username = request.user
+        id = username.id
+        promotions = Promotion.objects.filter(promoter_id=id)
+        return render(request, 'view_promotion.html', {'promotions': promotions})
+
+def edit_promotions(request, id):
+    promotions = Promotion.objects.filter(id=id)
+    return render(request, 'edit_promotion.html', {'promotions': promotions})
+
+def edited_promotions(request):
+    if request.method == 'POST':
+        id = request.POST["pk"]
+        description = request.POST["description"]
+        start_date = request.POST["start-date"]
+        end_date = request.POST["end-date"]
+
+        # update the event
+        update = Promotion.objects.get(id=id)
+        update.description = description
+        update.end_date = end_date
+        update.start_date = start_date
+        update.save()
+
+        return redirect('home')
 
 def view_reports(request):
     return HttpResponse("View promotions!")

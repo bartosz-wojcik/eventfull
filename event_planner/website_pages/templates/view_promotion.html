@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <tr>
+        <th>Promotions</th>
+    </tr>
+    {% for item in promotions %}
+    <tr>
+        <td>{{ item.event.name }}</td>
+        <td>{{ item.start_date }}</td>
+        <td>{{ item.end_date }}</td>
+        <td><a href="/edit_promotion/{{ item.pk }}" >Edit</a></td>
+        <td><a href="/delete_promotion/{{ item.pk }}" >Delete</a></td>
+    </tr>
+    {% endfor %}
+
+
+
+</body>
+</html>

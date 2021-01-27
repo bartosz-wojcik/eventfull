@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Eventfull - Promoter Edit Event</title>
+    <title>Edit Promotion</title>
 </head>
 <body>
 
@@ -12,22 +12,19 @@
 <a href="/logout">Logout</a>
 {% endif %}
 
-    {% for item in events %}
-    <form method="post" action="{% url 'edited_event'%}">
+    {% for item in promotions %}
+    <form method="post" action="{% url 'edited_promotion'%}">
         {% csrf_token %}
         <br />
-        <input value="{{ item.name }}" name="event-name">
+        <label for="event-name">Event Name: {{ item.event.name }}</label>
         <br />
+        <label for="description">Event Name</label>
         <textarea rows="4" cols="50" name="description">{{ item.description }}</textarea>
         <br />
-        <input value="{{ item.venue_name }}" name="venue-name">
-        <br />
-        <input value="{{ item.performer_names }}" name="performer-names">
-        <br />
-        <input type="number" value="{{ item.ticket_price }}" name="ticket-price">
-        <br />
+         <label for="start-date">Start Date</label>
         <input type="datetime-local" value="{{ item.start_date|date:'c' }}" name="start-date">
         <br />
+        <label for="start-date">End Date</label>
         <input type="datetime-local" value="{{ item.end_date|date:'c' }}" name="end-date">
         <br />
         <input type="hidden" value="{{ item.pk }}" name="pk">
@@ -43,6 +40,6 @@
 </script>
 {% endblock %}
 
-</body>
 
+</body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Eventfull - Promoter Delete Event</title>
+    <title>Title</title>
 </head>
 <body>
 
@@ -12,30 +12,32 @@
 <a href="/logout">Logout</a>
 {% endif %}
 
-    {% for item in events %}
-    <form method="post" action="{% url 'deleted_event'%}">
+    {% for item in promotion %}
+    <form method="post" action="{% url 'deleted_promotion' %}">
         {% csrf_token %}
-        <p> Do you want to delete the following event?</p>
+        <p> Do you want to delete the following promotion?</p>
         <br />
-        <input value="{{ item.name }}" value="{{ item.name }}" name="event-name" readonly>
-         <br />
+        <input value="{{ item.event.name }}" name="event-name" readonly>
+        <br />
+        <input value="{{ item.promo_code}}" name="promo-code" readonly>
+        <br />
         <input  name="start" value="{{ item.start_date }}" readonly>
-         <br />
+        <br />
         <input  name="end" value="{{ item.end_date }}" readonly>
         <br />
         <input type="hidden" value="{{ item.pk }}" name="pk">
-         <br />
+        <br />
         <input type="submit" value="Delete">
     </form>
     {% endfor %}
 
 {% include "scripts.html" %}
-
 <script>
     $(document).ready(function(){
     });
 </script>
 {% endblock %}
+
 
 </body>
 </html>

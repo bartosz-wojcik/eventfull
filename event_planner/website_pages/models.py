@@ -41,7 +41,7 @@ class Event(models.Model):
 
 class Promotion(models.Model):
     promoter = models.ForeignKey('website_pages.UserProfile', on_delete=models.CASCADE)
-    event= models.ForeignKey('website_pages.Event', on_delete=models.CASCADE)
+    event = models.ForeignKey('website_pages.Event', on_delete=models.CASCADE)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     description = models.CharField(max_length=400)
