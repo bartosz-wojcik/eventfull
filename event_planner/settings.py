@@ -83,9 +83,11 @@ WSGI_APPLICATION = 'event_planner.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3' or '/home/site/wwwroot/db.sqlite3',
     }
 }
+
+
 
 
 # Password validation
