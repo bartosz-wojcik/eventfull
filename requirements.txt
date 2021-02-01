@@ -3,7 +3,6 @@ az==0.1.0.dev1
 Django==3.1.2
 django-bootstrap==0.2.4
 django-jquery==3.1.0
-psycopg2==2.8.6
 psycopg2-binary==2.8.6
 pytz==2020.1
 sqlparse==0.4.1

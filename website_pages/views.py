@@ -41,10 +41,8 @@ def home(request):
             name__icontains=event_name)
         events.filter(
             venue_name__icontains=venue_name).filter(
-            category=Category.objects.filter(name=category)).filter(
-            start_date=start_date).filter(
-            end_date=end_date
-        )
+            category=Category.objects.filter(name=category)).filter(start_date=start_date).filter(end_date=end_date)\
+            .filter(event_type=event_type)
 
         return render(request, 'base.html', {'events': events, 'type': 'user'})
 
