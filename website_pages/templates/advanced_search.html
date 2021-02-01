@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Search</title>
+</head>
+<body>
+ <h1>Advanced Search</h1>
+    <form method="POST" action="/">
+        {% csrf_token %}
+        <label for="event-name">Event Name</label>
+        <input type="text" name="event-name" required>
+        <br />
+        <label for="venue-name">Venue Name</label>
+        <input type="text" name="venue-name" required>
+          <br />
+        <label for="category">Category</label>
+        <select name="category-name" id="categories" required>
+            {% for item in categories %}
+             <option value="{{item.name}}">{{item.name}}</option>
+            {% endfor %}
+       </select>
+        <br />
+        <label for="event-type">Event Type</label>
+        <select name="event-type" id="event-type" required>
+             <option value="all">All</option>
+             <option value="f">Free</option>
+             <option value="p">Paid</option>
+       </select>
+          <br />
+        <label for="start-date">Start Date</label>
+        <input type="date" name="start-date" required>
+        <br />
+       <label for="end-date">End Date</label>
+        <input type="date" name="end-date" required>
+        <br />
+        <input type="hidden" name="type" value="advanced" required>
+        <button type="submit">Search</button>
+    </form>
+
+</body>
+</html>

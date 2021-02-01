@@ -17,6 +17,12 @@
        <label for="event-name">Venue Name</label>
         <input  type="text"  name="event-name" required>
         <br />
+       <label for="event-type">Event Type</label>
+       <select name="event-type" id="event-type" required>
+             <option value="f">Free</option>
+             <option value="p">Paid</option>
+       </select>
+       <br />
        <label for="category">Category Name</label>
        <select name="category-name" id="categories">
         {% for item in categories %}
@@ -33,11 +39,11 @@
        <label for="performer-names">Performer Names</label>
         <input type="text" name="performer-names" required>
         <br />
-          <label for="ticket-quantity">Ticket Quantity (Empty for free event)</label>
-        <input type="number" name="ticket-quantity">
+       <label for="ticket-quantity" id="ticket-quantity-label">Ticket Quantity (Empty for free event)</label>
+        <input type="number"  id="ticket-quantity" name="ticket-quantity">
         <br />
-        <label for="ticket-price">Ticket Price (Empty for free event)</label>
-        <input type="number" name="ticket-price" step=".01">
+        <label for="ticket-price" id="ticket-price-label">Ticket Price (Empty for free event)</label>
+        <input type="number"  id="ticket-price" name="ticket-price" step=".01">
         <br />
         <label for="start-date">Start Date</label>
         <input type="datetime-local" name="start-date" required>
@@ -50,5 +56,33 @@
 
 {% include "scripts.html" %}
 {% endblock  %}
+
+<script>
+    $(document).ready(function(){
+
+  if ($('#event-type').val() == 'f'){
+    $('#ticket-quantity').hide()
+    $('#ticket-price').hide()
+    $('#ticket-quantity-label').hide()
+    $('#ticket-price-label').hide()
+    }
+
+        $('#event-type').change(function(){
+            console.log($('#event-type').val())
+            if ($('#event-type').val() == 'p'){
+                $('#ticket-quantity').show()
+                $('#ticket-price').show()
+                $('#ticket-quantity-label').show()
+                $('#ticket-price-label').show()
+            } else{
+                $('#ticket-quantity').hide()
+                $('#ticket-price').hide()
+                $('#ticket-quantity-label').hide()
+                $('#ticket-price-label').hide()
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

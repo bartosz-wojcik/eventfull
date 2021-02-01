@@ -5,26 +5,10 @@ from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
 from website_pages.models import Event, UserProfile, Category, Promotion
+from django.db.models import Case, When
 
 
 # Create your views here.
-
-# # login user
-# def login(request):
-#     if request.method == 'POST':
-#         form = SignUpForm(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             user.refresh_from_db()  # load the profile instance created by the signal
-#             user.save()
-#             raw_password = form.cleaned_data.get('password1')
-#             user = authenticate(username=user.username, password=raw_password)
-#             dj_login(request, user)
-#             print("heya")
-#             return redirect('home')
-#     else:
-#         form = SignUpForm()
-#     return render(request, 'login.html', {'form': form})
 
 # user registration
 def register(request):
@@ -43,9 +27,30 @@ def register(request):
 
 
 def home(request):
-    if request.user.is_authenticated and request.method == 'POST':
+
+    if request.method == 'POST' and request.POST["type"] == 'advanced':
+
+        event_name = request.POST["event-name"]
+        venue_name = request.POST["venue-name"]
+        event_type = request.POST["event-type"]
+        category = request.POST["category-name"]
+        start_date = request.POST["start-date"]
+        end_date = request.POST["end-date"]
+
+        events = Event.objects.filter(
+            name__icontains=event_name)
+        events.filter(
+            venue_name__icontains=venue_name).filter(
+            category=Category.objects.filter(name=category)).filter(
+            start_date=start_date).filter(
+            end_date=end_date
+        )
+
+        return render(request, 'base.html', {'events': events, 'type': 'user'})
+
+    elif request.user.is_authenticated and request.method == 'POST':
         query = request.POST.get('event-name', None)
-        events = Event.objects.filter(name=query)
+        events = Event.objects.filter(name__icontains=query)
         return render(request, 'base.html', {'events': events, 'type': 'user'})
 
     elif request.user.is_authenticated:
@@ -60,11 +65,9 @@ def home(request):
             return render(request, 'base.html', {'events': events, 'type': 'user'})
 
     else:
-        print('heyaads')
         if request.method == 'POST':
-            print('hujjj')
             query = request.POST.get('event-name', None)
-            events = Event.objects.filter(name=query)
+            events = Event.objects.filter(name__icontains=query)
             return render(request, 'base.html', {'events': events, 'type': 'user'})
         else:
             events = Event.objects.all()
@@ -73,7 +76,9 @@ def home(request):
 
 
 def advanced_search(request):
-    return HttpResponse("Perform an advanced search on ")
+
+    categories = Category.objects.all()
+    return render(request, 'advanced_search.html', {'categories': categories})
 
 
 def password_recovery(request):
@@ -122,6 +127,7 @@ def created_event(request):
         username = request.user
 
         event_name = request.POST["event-name"]
+        event_type = request.POST["event-type"]
         category = request.POST["category-name"]
         description = request.POST["description"]
         venue_name = request.POST["venue-name"]
@@ -130,26 +136,39 @@ def created_event(request):
         ticket_quantity = request.POST["ticket-quantity"]
         start_date = request.POST["start-date"]
         end_date = request.POST["end-date"]
-
-
         category = Category.objects.get(name=category)
-        print(category.id)
 
-        create = Event(
-            name=event_name,
-            description=description,
-            promoter = UserProfile.objects.get(id=username.id),
-            category=Category.objects.get(id=category.id),
-            venue_name=venue_name,
-            performer_names=performer_names,
-            ticket_price=ticket_price,
-            ticket_quantity=ticket_quantity,
-            start_date=start_date,
-            end_date=end_date)
-
-        create.save()
+        if event_type == 'f':
+            create = Event(
+                name=event_name,
+                description=description,
+                promoter=UserProfile.objects.get(id=username.id),
+                category=Category.objects.get(id=category.id),
+                venue_name=venue_name,
+                event_type=event_type,
+                performer_names=performer_names,
+                ticket_price=0.00,
+                ticket_quantity=0,
+                start_date=start_date,
+                end_date=end_date)
+            create.save()
+        else:
+            create = Event(
+                name=event_name,
+                description=description,
+                promoter=UserProfile.objects.get(id=username.id),
+                category=Category.objects.get(id=category.id),
+                venue_name=venue_name,
+                event_type=event_type,
+                performer_names=performer_names,
+                ticket_price=ticket_price,
+                ticket_quantity=ticket_quantity,
+                start_date=start_date,
+                end_date=end_date)
+            create.save()
 
     return redirect('home')
+
 
 def promoter_view(request):
     if request.user.is_authenticated:
