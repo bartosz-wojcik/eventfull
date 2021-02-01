@@ -80,18 +80,23 @@ WSGI_APPLICATION = 'event_planner.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'eventfull-db',
-        'USER' : 'bartzhome@eventfull-db',
-        'PASSWORD': 'Polska222!',
-        'HOST': 'eventfull-db.postgres.database.azure.com',
-        'POST': '5432'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3' or '/home/site/wwwroot/db.sqlite3',
+#     }
+# }
 
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'eventfull-db',
+#         'USER' : 'bartzhome@eventfull-db',
+#         'PASSWORD': 'Polska222!',
+#         'HOST': 'eventfull-db.postgres.database.azure.com',
+#         'POST': '5432'
+#     }
+# }
 
 
 # Password validation
