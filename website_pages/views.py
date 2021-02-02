@@ -43,12 +43,12 @@ def home(request):
             venue_name__icontains=venue_name).filter(
             category=Category.objects.filter(name=category)).filter(
             start_date=start_date).filter(
-            end_date=end_date
-        )
+            end_date=end_date).filter(
+            event_type=event_type)
 
         return render(request, 'base.html', {'events': events, 'type': 'user'})
 
-    elif request.user.is_authenticated and request.method == 'POST':
+    elif request.user.is_authenticated and request.method == 'POST' and request.POST["type"] == 'searche':
         query = request.POST.get('event-name', None)
         events = Event.objects.filter(name__icontains=query)
         return render(request, 'base.html', {'events': events, 'type': 'user'})

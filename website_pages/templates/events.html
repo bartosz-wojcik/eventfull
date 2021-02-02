@@ -1,6 +1,14 @@
-<table>
+<table class="table" style="text-align:center;">
     <tr>
-        <th>Events</th>
+        <th>Event</th>
+        <th>Description</th>
+        <th>Venue</th>
+        <th>Performers</th>
+        <th>Category</th>
+         <th>Type</th>
+         <th>Start Date</th>
+         <th>End Date</th>
+
     </tr>
     {% if type == 'promoter'  %}
     {% for item in events %}
@@ -25,7 +33,14 @@
         <td>{{ item.description }}</td>
         <td>{{ item.venue_name }}</td>
         <td>{{ item.performer_names }}</td>
-        <td>{{ item.ticket_price }}</td>
+        <td>{{ item.category.name }}</td>
+
+        {% if item.event_type == 'f'  %}
+        <td>Free</td>
+        {% else %}
+        <td>Buy tickets</td>
+        {% endif %}
+
         <td>{{ item.start_date }}</td>
         <td>{{ item.end_date }}</td>
     </tr>

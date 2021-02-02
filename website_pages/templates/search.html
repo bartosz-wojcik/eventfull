@@ -1,5 +1,6 @@
 <form method="POST" action="/">
 {% csrf_token %}
 <input type="text" name="event-name" placeholder="Search by event name">
+    <input type="hidden" name="type" value="search" >
 <button type="submit" >Search</button>
 </form>
