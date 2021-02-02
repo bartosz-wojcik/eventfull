@@ -14,9 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
 from website_pages.views import *
+from django.contrib.staticfiles.views import serve as serve_static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -50,5 +51,11 @@ urlpatterns = [
     path('view_reports', view_reports),
 ]
 
+def _static_butler(request, path, **kwargs):
+    return serve_static(request, path, insecure=True, **kwargs)
+
+urlpatterns += [
+    re_path(r'static/(.+)', _static_butler)
+]
 
 
