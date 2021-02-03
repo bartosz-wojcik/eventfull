@@ -1,4 +1,10 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
 
 {% block content %}
 
@@ -34,5 +40,11 @@
 
 {# Assumes you setup the password_reset view in your URLconf #}
 {#<p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}
-
+{% include "scripts.html" %}
 {% endblock %}
+
+</body>
+</html>
+
+
+

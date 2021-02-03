@@ -1,16 +1,16 @@
+{% block content  %}
 <table class="table" style="text-align:center;">
+
+    {% if type == 'promoter'  %}
     <tr>
-        <th>Event</th>
+        <th>Name</th>
         <th>Description</th>
         <th>Venue</th>
         <th>Performers</th>
-        <th>Category</th>
-         <th>Type</th>
-         <th>Start Date</th>
-         <th>End Date</th>
-
+        <th>Ticket Price</th>
+        <th>Start Date</th>
+        <th>End Date</th>
     </tr>
-    {% if type == 'promoter'  %}
     {% for item in events %}
     <tr>
         <td>{{ item.name }}</td>
@@ -27,6 +27,16 @@
     {% endif %}
 
     {% if type == 'user'  %}
+    <tr>
+        <th>Event</th>
+        <th>Description</th>
+        <th>Venue</th>
+        <th>Performers</th>
+        <th>Category</th>
+        <th>Type</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+    </tr>
     {% for item in events %}
     <tr>
         <td>{{ item.name }}</td>
@@ -43,10 +53,56 @@
 
         <td>{{ item.start_date }}</td>
         <td>{{ item.end_date }}</td>
+
+        {% if user.is_authenticated %}
+        <td><a href="#" event="{{ item.pk }}" id="wishlist-{{ item.pk }}" type="like">Like</a></td>
+         {% endif  %}
+
     </tr>
     {% endfor %}
     {% endif %}
-
-
-
 </table>
+{% include "scripts.html" %}
+
+
+<script>
+    $(document).ready(function(){
+
+      $('table a').click(function(){
+
+            if($(this).attr("type") == "like"){
+             item = $(this)
+              $.ajax({
+            type: 'GET',
+            url: "{% url 'like_event' %}",
+            data: {"id": $(this).attr("event")},
+            success: function (response) {
+            item.prop("type","unlike");
+            item.text("Unlike");
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        })
+            } else{
+              $.ajax({
+            type: 'GET',
+            url: "{% url 'unlike_event' %}",
+            data: {"id": $(this).attr("event")},
+            success: function (response) {
+                console.log("unlike");
+                item.attr("type","like");
+                item.text('Like');
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        })
+
+            }
+      })
+
+    });
+</script>
+{% endblock  %}
+

@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login as dj_login, logout
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
-from website_pages.models import Event, UserProfile, Category, Promotion
+from website_pages.models import Event, UserProfile, Category, Promotion, WishList
 from django.db.models import Case, When
 
 
@@ -29,7 +29,6 @@ def register(request):
 def home(request):
 
     if request.method == 'POST' and request.POST["type"] == 'advanced':
-
         event_name = request.POST["event-name"]
         venue_name = request.POST["venue-name"]
         event_type = request.POST["event-type"]
@@ -48,21 +47,23 @@ def home(request):
 
         return render(request, 'base.html', {'events': events, 'type': 'user'})
 
-    elif request.user.is_authenticated and request.method == 'POST' and request.POST["type"] == 'searche':
+    elif request.user.is_authenticated and request.method == 'POST' and request.POST["type"] == 'search':
         query = request.POST.get('event-name', None)
         events = Event.objects.filter(name__icontains=query)
         return render(request, 'base.html', {'events': events, 'type': 'user'})
 
     elif request.user.is_authenticated:
-        username = request.user
-        query = UserProfile.objects.get(id=username.id)
+        user = request.user
+        query = UserProfile.objects.get(id=user.id)
 
         if query.user_type == "p":
             return render(request, 'promoter.html')
 
         if query.user_type == "u":
             events = Event.objects.all()
-            return render(request, 'base.html', {'events': events, 'type': 'user'})
+            wishlist = WishList.objects.filter(user_id=user.id)
+
+            return render(request, 'base.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
 
     else:
         if request.method == 'POST':
@@ -75,14 +76,49 @@ def home(request):
 
 
 
-def advanced_search(request):
 
+def advanced_search(request):
     categories = Category.objects.all()
     return render(request, 'advanced_search.html', {'categories': categories})
 
 
+def profile(request):
+    categories = Category.objects.all()
+    return render(request, 'profile.html', {'categories': categories})
+
+
+def like_event(request):
+
+    if request.method == 'GET':
+
+        event_id = request.GET["id"]
+        user = request.user
+
+        wishlist = WishList(
+            user=UserProfile.objects.get(id=user.id),
+            event=Event.objects.get(id=event_id)
+        )
+        wishlist.save()
+
+        return HttpResponse("liked")
+
+def unlike_event(request):
+
+    if request.method == 'GET':
+        event_id = request.GET["id"]
+        user = request.user
+
+        WishList.objects.filter(
+            user_id=UserProfile.objects.get(id=user.id),
+            event_id=Event.objects.get(id=event_id)
+        ).delete()
+
+    return HttpResponse("unliked")
+
+
 def password_recovery(request):
-    return HttpResponse("Recover your password!")
+
+    return HttpResponse("password")
 
 def change_password(request):
     return HttpResponse("Change your password!")

@@ -1,15 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventfull</title>
+</head>
+<body>
 <h1>Eventfull</h1>
 {% block content %}
 
+<a href="/advanced_search">Advanced Search</a>
 {% if user.is_authenticated  %}
+<a href="/profile">Profile</a>
 <a href="/logout">Logout</a>
 {% else %}
 <a href="/signup">Sign up</a>
 <a href="/login">Login</a>
 {% endif %}
-<a href="/advanced_search">Advanced Search</a>
+
 
 {% include "search.html" %}
 {% include "events.html" %}
 {% include "scripts.html" %}
+
 {% endblock %}
+
+</body>
+</html>
+
+
+
+
