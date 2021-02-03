@@ -12,6 +12,7 @@ from django.db.models import Case, When
 
 # user registration
 def register(request):
+
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
@@ -27,7 +28,8 @@ def register(request):
 
 
 def home(request):
-
+    if 'type' in request.POST:
+        print('yes')
     if request.method == 'POST' and request.POST["type"] == 'advanced':
         event_name = request.POST["event-name"]
         venue_name = request.POST["venue-name"]
@@ -35,6 +37,17 @@ def home(request):
         category = request.POST["category-name"]
         start_date = request.POST["start-date"]
         end_date = request.POST["end-date"]
+
+        results = Event.objects.all()
+
+        for i in results:
+            print(i.name)
+
+        if 'event-name' in request.POST:
+            results = results.filter(name__icontains=event_name)
+
+        for i in results:
+            print("ii",i.name)
 
         events = Event.objects.filter(
             name__icontains=event_name)
