@@ -5,8 +5,88 @@
     <title>Profile</title>
 </head>
 <body>
+<a href="/signup">Edit Profile</a>
+<a href="/login">Change Password</a>
+<a href="/login">Delete Profile</a>
 
-<h1>HERELRO!#@!#@</h1>
+{% block content  %}
+<table class="table" style="text-align:center;">
+    <tr>
+        <th>Event</th>
+        <th>Description</th>
+        <th>Venue</th>
+        <th>Performers</th>
+        <th>Category</th>
+        <th>Type</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+    </tr>
+    {% for item in wishlist %}
+    <tr>
+        <td>{{ item.event.name }}</td>
+        <td>{{ item.event.description }}</td>
+        <td>{{ item.event.venue_name }}</td>
+        <td>{{ item.event.performer_names }}</td>
+        <td>{{ item.category.name }}</td>
+
+        {% if item.event.event_type == 'f'  %}
+        <td>Free</td>
+        {% else %}
+        <td>Buy tickets</td>
+        {% endif %}
+
+        <td>{{ item.event.start_date }}</td>
+        <td>{{ item.event.end_date }}</td>
+
+        {% if user.is_authenticated %}
+        <td><a href="#" event="{{ item.pk }}" id="wishlist-{{ item.pk }}" type="like">Like</a></td>
+         {% endif  %}
+    </tr>
+    {% endfor %}
+</table>
+{% include "scripts.html" %}
+
+
+<script>
+    $(document).ready(function(){
+
+      $('table a').click(function(){
+
+            if($(this).attr("type") == "like"){
+             item = $(this)
+              $.ajax({
+            type: 'GET',
+            url: "{% url 'like_event' %}",
+            data: {"id": $(this).attr("event")},
+            success: function (response) {
+            item.prop("type","unlike");
+            item.text("Unlike");
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        })
+            } else{
+              $.ajax({
+            type: 'GET',
+            url: "{% url 'unlike_event' %}",
+            data: {"id": $(this).attr("event")},
+            success: function (response) {
+                console.log("unlike");
+                item.attr("type","like");
+                item.text('Like');
+            },
+            error: function (response) {
+                console.log(response)
+            }
+        })
+
+            }
+      })
+
+    });
+</script>
+{% endblock  %}
 
 </body>
 </html>

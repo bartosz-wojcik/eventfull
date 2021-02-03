@@ -83,9 +83,15 @@ def advanced_search(request):
 
 
 def profile(request):
-    categories = Category.objects.all()
-    return render(request, 'profile.html', {'categories': categories})
+    print("hey")
+    user = request.user
+    wishlist = WishList.objects.filter(user_id=user.id)
 
+    print(len(wishlist))
+    for i in wishlist:
+        print("hey",i.event)
+
+    return render(request, 'profile.html', {'wishlist': wishlist})
 
 def like_event(request):
 
