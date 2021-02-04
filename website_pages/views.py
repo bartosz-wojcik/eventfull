@@ -68,14 +68,14 @@ def home(request):
             if 'end-date' in request.POST and request.POST['end-date'] != "":
                 events = events.filter(end_date=request.POST['end-date'])
 
-            return render(request, 'base.html', {'events': events, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'type': 'user'})
 
         # if user is authenticated and performs a search, filter name of event from events query
         # and show filtered events to user
         elif request.user.is_authenticated and request.POST["type"] == 'search':
             query = request.POST.get('event-name', None)
             events = Event.objects.filter(name__icontains=query)
-            return render(request, 'base.html', {'events': events, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'type': 'user'})
 
     # if user is authenticated
     elif request.user.is_authenticated:
@@ -93,18 +93,18 @@ def home(request):
             for item in wishlist:
                 events = events.exclude(name=item.event.name)
 
-            return render(request, 'base.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
     # else they are a unregistered user
     else:
         if request.method == 'POST':
             # performed a search, filter name of event from events query and show filtered events to user
             query = request.POST.get('event-name', None)
             events = Event.objects.filter(name__icontains=query)
-            return render(request, 'base.html', {'events': events, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'type': 'user'})
         else:
             # else show all events in database
             events = Event.objects.all()
-            return render(request, 'base.html', {'events': events, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'type': 'user'})
 
 
 
