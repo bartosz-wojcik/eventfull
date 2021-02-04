@@ -63,7 +63,6 @@
 </table>
 {% include "scripts.html" %}
 
-
 <script>
     $(document).ready(function(){
 
@@ -76,28 +75,12 @@
             url: "{% url 'like_event' %}",
             data: {"id": $(this).attr("event")},
             success: function (response) {
-            item.prop("type","unlike");
-            item.text("Unlike");
+            item.closest("tr").remove();
             },
             error: function (response) {
                 console.log(response)
             }
         })
-            } else{
-              $.ajax({
-            type: 'GET',
-            url: "{% url 'unlike_event' %}",
-            data: {"id": $(this).attr("event")},
-            success: function (response) {
-                console.log("unlike");
-                item.attr("type","like");
-                item.text('Like');
-            },
-            error: function (response) {
-                console.log(response)
-            }
-        })
-
             }
       })
 

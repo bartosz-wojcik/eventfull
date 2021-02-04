@@ -14,7 +14,7 @@
    <form method="post" action="{% url 'created_event'%}">
         {% csrf_token %}
         <br />
-       <label for="event-name">Venue Name</label>
+       <label for="event-name">Event Name</label>
         <input  type="text"  name="event-name" required>
         <br />
        <label for="event-type">Event Type</label>
@@ -39,11 +39,11 @@
        <label for="performer-names">Performer Names</label>
         <input type="text" name="performer-names" required>
         <br />
-       <label for="ticket-quantity" id="ticket-quantity-label">Ticket Quantity (Empty for free event)</label>
+       <label for="ticket-quantity" id="ticket-quantity-label">Ticket Quantity (Max 10000)</label>
         <input type="number"  id="ticket-quantity" name="ticket-quantity">
         <br />
-        <label for="ticket-price" id="ticket-price-label">Ticket Price (Empty for free event)</label>
-        <input type="number"  id="ticket-price" name="ticket-price" step=".01">
+        <label for="ticket-price" id="ticket-price-label">Ticket Price (e.g 10.00)</label>
+        <input type="de"  id="ticket-price" name="ticket-price" step=".01">
         <br />
         <label for="start-date">Start Date</label>
         <input type="datetime-local" name="start-date" required>

@@ -1,89 +1,108 @@
 
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login as dj_login, logout
+from django.contrib.auth import authenticate, login as dj_login
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
 from website_pages.models import Event, UserProfile, Category, Promotion, WishList
-from django.db.models import Case, When
-
 
 # Create your views here.
 
-# user registration
+
 def register(request):
+    """
+    This function allows the user to register an account
+    if form is valid, create a user
+    :param request: used for user information and retrieving parameters
+    :return: render signup.html and the form fields
+    """
 
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
+        # if the form input is valid
         if form.is_valid():
+            # save the form
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
+            # log in user and return to home
             dj_login(request, user)
             return redirect('home')
     else:
+        # else send user creation form
         form = CustomUserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
 
 def home(request):
-    if 'type' in request.POST:
-        print('yes')
-    if request.method == 'POST' and request.POST["type"] == 'advanced':
-        event_name = request.POST["event-name"]
-        venue_name = request.POST["venue-name"]
-        event_type = request.POST["event-type"]
-        category = request.POST["category-name"]
-        start_date = request.POST["start-date"]
-        end_date = request.POST["end-date"]
+    """
+    this function handles user interaction on the home page
+    :param request: used for user information and retrieving parameters
+    :return: advanced search results, search results, redirect promoter to promoter page, redirect user to home page
+    """
+    if request.method == 'POST' and 'type' in request.POST:
+        # if type is equal to advanced
+        # retrieve all events and if parameters are present, filter those parameters in the events query
+        if request.POST["type"] == 'advanced':
 
-        results = Event.objects.all()
+            events = Event.objects.all()
 
-        for i in results:
-            print(i.name)
+            if 'event-name' in request.POST and request.POST['event-name'] != "":
 
-        if 'event-name' in request.POST:
-            results = results.filter(name__icontains=event_name)
+                events = events.filter(name__icontains=request.POST['event-name'])
 
-        for i in results:
-            print("ii",i.name)
+            if 'venue-name' in request.POST and request.POST['venue-name'] != "":
+                events = events.filter(venue_name__icontains=request.POST['venue-name'])
 
-        events = Event.objects.filter(
-            name__icontains=event_name)
-        events.filter(
-            venue_name__icontains=venue_name).filter(
-            category=Category.objects.filter(name=category)).filter(
-            start_date=start_date).filter(
-            end_date=end_date).filter(
-            event_type=event_type)
+            if 'event-type' in request.POST and request.POST['event-type'] != "":
+                events = events.filter(event_type=request.POST['event-type'])
 
-        return render(request, 'base.html', {'events': events, 'type': 'user'})
+            if 'category-name' in request.POST and len(events) > 0:
+                category = Category.objects.get(name=request.POST['category-name'])
+                events = events.filter(category_id=category.id)
 
-    elif request.user.is_authenticated and request.method == 'POST' and request.POST["type"] == 'search':
-        query = request.POST.get('event-name', None)
-        events = Event.objects.filter(name__icontains=query)
-        return render(request, 'base.html', {'events': events, 'type': 'user'})
+            if 'start-date' in request.POST and request.POST['start-date'] != "":
+                events = events.filter(start_date=request.POST['start-date'])
 
+            if 'end-date' in request.POST and request.POST['end-date'] != "":
+                events = events.filter(end_date=request.POST['end-date'])
+
+            return render(request, 'base.html', {'events': events, 'type': 'user'})
+
+        # if user is authenticated and performs a search, filter name of event from events query
+        # and show filtered events to user
+        elif request.user.is_authenticated and request.POST["type"] == 'search':
+            query = request.POST.get('event-name', None)
+            events = Event.objects.filter(name__icontains=query)
+            return render(request, 'base.html', {'events': events, 'type': 'user'})
+
+    # if user is authenticated
     elif request.user.is_authenticated:
         user = request.user
         query = UserProfile.objects.get(id=user.id)
-
+        # if they are promoter, redirect them to promoter page
         if query.user_type == "p":
             return render(request, 'promoter.html')
-
+        # if they are a user, get all events, filter out events in their wish list and display page
+        # with events not yet liked
         if query.user_type == "u":
+
             events = Event.objects.all()
             wishlist = WishList.objects.filter(user_id=user.id)
+            for item in wishlist:
+                events = events.exclude(name=item.event.name)
 
             return render(request, 'base.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
-
+    # else they are a unregistered user
     else:
         if request.method == 'POST':
+            # performed a search, filter name of event from events query and show filtered events to user
             query = request.POST.get('event-name', None)
             events = Event.objects.filter(name__icontains=query)
             return render(request, 'base.html', {'events': events, 'type': 'user'})
         else:
+            # else show all events in database
             events = Event.objects.all()
             return render(request, 'base.html', {'events': events, 'type': 'user'})
 
@@ -91,18 +110,19 @@ def home(request):
 
 
 def advanced_search(request):
+    """
+
+    :param request:
+    :return:
+    """
     categories = Category.objects.all()
     return render(request, 'advanced_search.html', {'categories': categories})
 
 
 def profile(request):
-    print("hey")
+
     user = request.user
     wishlist = WishList.objects.filter(user_id=user.id)
-
-    print(len(wishlist))
-    for i in wishlist:
-        print("hey",i.event)
 
     return render(request, 'profile.html', {'wishlist': wishlist})
 
@@ -125,10 +145,9 @@ def unlike_event(request):
 
     if request.method == 'GET':
         event_id = request.GET["id"]
-        user = request.user
 
         WishList.objects.filter(
-            user_id=UserProfile.objects.get(id=user.id),
+            user_id=UserProfile.objects.get(id=request.user.id),
             event_id=Event.objects.get(id=event_id)
         ).delete()
 
@@ -143,10 +162,35 @@ def change_password(request):
     return HttpResponse("Change your password!")
 
 def user_logged_in(request):
+
     return HttpResponse("View in more ways!")
 
 def edit_profile(request):
-    return HttpResponse("Edit your profile!")
+    return render(request, 'edit_profile.html')
+
+def edited_profile(request):
+    """
+    this functions edits the users profiles - first name, last name and email
+    if the paramters are passed, they will be updated
+
+    :param request:
+    :return:  user is redirected back to profile
+    """
+
+    if request.method == 'POST':
+        update = UserProfile.objects.get(id=request.user.id)
+        if 'first-name' in request.POST and request.POST['first-name'] != "":
+            update.first_name = request.POST['first-name']
+
+        if 'last-name' in request.POST and request.POST['last-name'] != "":
+            update.first_name = request.POST['last-name']
+
+        if 'email' in request.POST and request.POST['email'] != "":
+            update.first_name = request.POST['email']
+
+        update.save()
+
+    return redirect('profile')
 
 def delete_profile(request):
     return HttpResponse("Delete your profile!")
@@ -328,7 +372,11 @@ def view_promotions(request):
 
 def edit_promotions(request, id):
     promotions = Promotion.objects.filter(id=id)
-    return render(request, 'edit_promotion.html', {'promotions': promotions})
+
+    if promotions.promoter_id == request.user.id:
+        return render(request, 'edit_promotion.html', {'promotions': promotions})
+    else:
+        return redirect('home')
 
 def edited_promotions(request):
     if request.method == 'POST':
@@ -337,8 +385,8 @@ def edited_promotions(request):
         start_date = request.POST["start-date"]
         end_date = request.POST["end-date"]
 
-        # update the event
         update = Promotion.objects.get(id=id)
+        #update promotion parameters
         update.description = description
         update.end_date = end_date
         update.start_date = start_date

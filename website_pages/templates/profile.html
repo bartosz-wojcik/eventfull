@@ -5,9 +5,9 @@
     <title>Profile</title>
 </head>
 <body>
-<a href="/signup">Edit Profile</a>
-<a href="/login">Change Password</a>
-<a href="/login">Delete Profile</a>
+<a href="/edit_profile">Edit Profile</a>
+<a href="/change_password">Change Password</a>
+<a href="/delete_profile">Delete Profile</a>
 
 {% block content  %}
 <table class="table" style="text-align:center;">
@@ -39,7 +39,7 @@
         <td>{{ item.event.end_date }}</td>
 
         {% if user.is_authenticated %}
-        <td><a href="#" event="{{ item.pk }}" id="wishlist-{{ item.pk }}" type="like">Like</a></td>
+        <td><a href="#" event="{{ item.event.id }}" id="wishlist-{{ item.pk }}" type="unlike">Unlike</a></td>
          {% endif  %}
     </tr>
     {% endfor %}
@@ -52,35 +52,19 @@
 
       $('table a').click(function(){
 
-            if($(this).attr("type") == "like"){
+            if($(this).attr("type") == "unlike"){
              item = $(this)
-              $.ajax({
-            type: 'GET',
-            url: "{% url 'like_event' %}",
-            data: {"id": $(this).attr("event")},
-            success: function (response) {
-            item.prop("type","unlike");
-            item.text("Unlike");
-            },
-            error: function (response) {
-                console.log(response)
-            }
-        })
-            } else{
-              $.ajax({
+            $.ajax({
             type: 'GET',
             url: "{% url 'unlike_event' %}",
             data: {"id": $(this).attr("event")},
             success: function (response) {
-                console.log("unlike");
-                item.attr("type","like");
-                item.text('Like');
+                item.closest("tr").remove();
             },
             error: function (response) {
                 console.log(response)
             }
         })
-
             }
       })
 

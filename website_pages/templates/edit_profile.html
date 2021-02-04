@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
 </head>
 <body>
-$END$
+
+    <form method="post" action="{% url 'edited_profile'%}">
+        {% csrf_token %}
+        <br />
+        <label>First Name</label>
+        <input type="text" name="First Name">
+        <br />
+         <label>Last Name</label>
+        <input type="text" name="Last Name">
+        <br />
+         <label>Email</label>
+        <input type="email" name="Last Name">
+        <br />
+        <input type="hidden" value="{{ user_profile.pk }}" name="pk">
+        <br />
+        <input type="submit" value="Submit">
+    </form>
+
 </body>
 </html>

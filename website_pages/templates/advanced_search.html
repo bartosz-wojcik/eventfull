@@ -9,31 +9,31 @@
     <form method="POST" action="/">
         {% csrf_token %}
         <label for="event-name">Event Name</label>
-        <input type="text" name="event-name" required>
+        <input type="text" name="event-name" >
         <br />
         <label for="venue-name">Venue Name</label>
-        <input type="text" name="venue-name" required>
+        <input type="text" name="venue-name" >
           <br />
         <label for="category">Category</label>
-        <select name="category-name" id="categories" required>
+        <select name="category-name" id="categories" >
             {% for item in categories %}
              <option value="{{item.name}}">{{item.name}}</option>
             {% endfor %}
        </select>
         <br />
         <label for="event-type">Event Type</label>
-        <select name="event-type" id="event-type" required>
+        <select name="event-type" id="event-type" >
              <option value="f">Free</option>
              <option value="p">Paid</option>
        </select>
           <br />
         <label for="start-date">Start Date</label>
-        <input type="date" name="start-date" required>
+        <input type="date" name="start-date" >
         <br />
        <label for="end-date">End Date</label>
-        <input type="date" name="end-date" required>
+        <input type="date" name="end-date" >
         <br />
-        <input type="hidden" name="type" value="advanced" required>
+        <input type="hidden" name="type" value="advanced" >
         <button type="submit">Search</button>
     </form>
 
