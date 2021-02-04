@@ -5,25 +5,26 @@
     <title>Eventfull</title>
 </head>
 <body>
-<h1>Eventfull</h1>
-{% block content %}
-
-<a href="/advanced_search">Advanced Search</a>
-{% if user.is_authenticated  %}
-<a href="/profile">Profile</a>
-<a href="/logout">Logout</a>
-{% else %}
-<a href="/signup">Sign up</a>
-<a href="/login">Login</a>
-{% endif %}
+<div class="container">
+    <h1>Eventfull</h1>
 
 
-{% include "search.html" %}
-{% include "events.html" %}
-{% include "scripts.html" %}
+    <a href="/advanced_search">Advanced Search</a>
+    {% if user.is_authenticated  %}
+        <a href="/profile">Profile</a>
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="/signup">Sign up</a>
+        <a href="/login">Login</a>
+    {% endif %}
 
-{% endblock %}
 
+    {% include "search.html" %}
+
+    {% include "scripts.html" %}
+
+    {% block content %}{% endblock %}
+</div>
 </body>
 </html>
 

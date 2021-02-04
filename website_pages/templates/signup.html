@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Eventfull Sign Up</title>
-</head>
-<body>
+{% extends "base.html" %}
+
 {% block content %}
   <h2>Sign up</h2>
   <form method="post">
@@ -23,8 +18,4 @@
     {% endfor %}
     <button type="submit">Sign up</button>
   </form>
-{% include "scripts.html" %}
 {% endblock %}
-
-</body>
-</html>
