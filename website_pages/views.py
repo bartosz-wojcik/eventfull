@@ -58,12 +58,12 @@ def home(request):
             end_date=end_date).filter(
             event_type=event_type)
 
-        return render(request, 'base.html', {'events': events, 'type': 'user'})
+        return render(request, 'home.html', {'events': events, 'type': 'user'})
 
     elif request.user.is_authenticated and request.method == 'POST' and request.POST["type"] == 'search':
         query = request.POST.get('event-name', None)
         events = Event.objects.filter(name__icontains=query)
-        return render(request, 'base.html', {'events': events, 'type': 'user'})
+        return render(request, 'home.html', {'events': events, 'type': 'user'})
 
     elif request.user.is_authenticated:
         user = request.user
@@ -76,16 +76,16 @@ def home(request):
             events = Event.objects.all()
             wishlist = WishList.objects.filter(user_id=user.id)
 
-            return render(request, 'base.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
 
     else:
         if request.method == 'POST':
             query = request.POST.get('event-name', None)
             events = Event.objects.filter(name__icontains=query)
-            return render(request, 'base.html', {'events': events, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'type': 'user'})
         else:
             events = Event.objects.all()
-            return render(request, 'base.html', {'events': events, 'type': 'user'})
+            return render(request, 'home.html', {'events': events, 'type': 'user'})
 
 
 

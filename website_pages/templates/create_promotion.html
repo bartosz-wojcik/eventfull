@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create Promotion</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-{% block content  %}
+{% block content %}
     {% if user.is_authenticated  %}
     <a href="/logout">Logout</a>
     {% endif %}
@@ -36,8 +30,4 @@
         <input type="submit" value="Submit">
     </form>
 
-{% include "scripts.html" %}
 {% endblock  %}
-
-</body>
-</html>

@@ -1,5 +1,5 @@
 {% block content  %}
-<table class="table" style="text-align:center;">
+<table class="table table-striped table-bordered" style="text-align:center; margin-top: 10px;">
 
     {% if type == 'promoter'  %}
     <tr>
@@ -61,7 +61,6 @@
     {% endfor %}
     {% endif %}
 </table>
-{% include "scripts.html" %}
 
 
 <script>

@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>View Events</title>
-</head>
-<body>
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -15,7 +9,6 @@
 {% endif %}
 
 {% include "events.html" %}
-{% include "scripts.html" %}
 {% endblock %}
 
 <script>
@@ -23,6 +16,3 @@
     });
 
 </script>
-
-</body>
-</html>

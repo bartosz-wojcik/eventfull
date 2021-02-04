@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Profile</title>
-</head>
-<body>
-<a href="/signup">Edit Profile</a>
-<a href="/login">Change Password</a>
-<a href="/login">Delete Profile</a>
+{% extends "base.html" %}
 
-{% block content  %}
+{% block content %}
 <table class="table" style="text-align:center;">
     <tr>
         <th>Event</th>
@@ -44,7 +35,6 @@
     </tr>
     {% endfor %}
 </table>
-{% include "scripts.html" %}
 
 
 <script>
@@ -87,6 +77,3 @@
     });
 </script>
 {% endblock  %}
-
-</body>
-</html>

@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Advanced Search</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
  <h1>Advanced Search</h1>
     <form method="POST" action="/">
         {% csrf_token %}
@@ -36,6 +32,4 @@
         <input type="hidden" name="type" value="advanced" required>
         <button type="submit">Search</button>
     </form>
-
-</body>
-</html>
+{% endblock %}

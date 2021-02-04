@@ -1,13 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Promoter Portal</title>
+{% extends "base.html" %}
 
-   <h1>Eventfull - Promoters Portal</h1>
-
-</head>
-<body>
 {% block content %}
 
 {% if user.is_authenticated  %}
@@ -20,6 +12,3 @@
 <a href="/view_promotion">View Promotions</a>
 <a href="/create_promotion">Create Promotion</a>
 
-
-</body>
-</html>

@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Delete Event</title>
-</head>
-<body>
+{% extends "base.html" %}
 
 {% block content %}
-
 {% if user.is_authenticated  %}
 <a href="/logout">Logout</a>
 {% endif %}
@@ -29,13 +22,9 @@
     </form>
     {% endfor %}
 
-{% include "scripts.html" %}
 
 <script>
     $(document).ready(function(){
     });
 </script>
 {% endblock %}
-
-</body>
-</html>

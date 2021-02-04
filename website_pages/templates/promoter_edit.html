@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Event</title>
-</head>
-<body>
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -36,13 +30,8 @@
     </form>
     {% endfor %}
 
-{% include "scripts.html" %}
 <script>
     $(document).ready(function(){
     });
 </script>
 {% endblock %}
-
-</body>
-
-</html>
