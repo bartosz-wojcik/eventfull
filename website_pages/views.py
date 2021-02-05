@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login as dj_login
 from django.shortcuts import render, redirect
@@ -79,17 +78,15 @@ def home(request):
 
     # if user is authenticated
     elif request.user.is_authenticated:
-        user = request.user
-        query = UserProfile.objects.get(id=user.id)
+        query = UserProfile.objects.get(id=request.user.id)
         # if they are promoter, redirect them to promoter page
         if query.user_type == "p":
             return render(request, 'promoter.html')
         # if they are a user, get all events, filter out events in their wish list and display page
         # with events not yet liked
         if query.user_type == "u":
-
             events = Event.objects.all()
-            wishlist = WishList.objects.filter(user_id=user.id)
+            wishlist = WishList.objects.filter(user_id=request.user.id)
             for item in wishlist:
                 events = events.exclude(name=item.event.name)
 
@@ -121,10 +118,11 @@ def advanced_search(request):
 
 def profile(request):
 
-    user = request.user
-    wishlist = WishList.objects.filter(user_id=user.id)
-
-    return render(request, 'profile.html', {'wishlist': wishlist})
+    if request.user.is_authenticated:
+        wishlist = WishList.objects.filter(user_id=request.user.id)
+        return render(request, 'profile.html', {'wishlist': wishlist, 'user_id': request.user.id})
+    else:
+        return redirect('home')
 
 def like_event(request):
 
@@ -166,7 +164,11 @@ def user_logged_in(request):
     return HttpResponse("View in more ways!")
 
 def edit_profile(request):
-    return render(request, 'edit_profile.html')
+
+    if request.user.is_authenticated:
+        return render(request, 'edit_profile.html')
+    else:
+        return redirect('home')
 
 def edited_profile(request):
     """
@@ -192,8 +194,24 @@ def edited_profile(request):
 
     return redirect('profile')
 
-def delete_profile(request):
-    return HttpResponse("Delete your profile!")
+def delete_profile(request, id):
+    if request.user.is_authenticated:
+
+        user_profile = UserProfile.objects.get(id=id)
+        return render(request, 'delete_profile.html', {'user_profile': user_profile})
+    else:
+        return redirect ('home')
+
+def deleted_profile(request):
+
+    if request.user.is_authenticated:
+
+        user_profile = UserProfile.objects.get(id=id)
+        return render(request, 'delete_profile.html', {'user_profile': user_profile})
+    else:
+        return redirect ('home')
+
+
 
 def notifications(request):
     return HttpResponse("See your notifcations!")
@@ -207,9 +225,7 @@ def checkout(request):
 def promoter(request):
 
     if request.user.is_authenticated:
-        username = request.user
-        query = UserProfile.objects.get(username=username)
-
+        query = UserProfile.objects.get(id=request.user.id)
         if not query.user_type == "p":
             return redirect('home')
     else:
@@ -218,13 +234,18 @@ def promoter(request):
 
 def create_event(request):
 
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
+            return redirect('home')
+
     categories = Category.objects.all()
     return render(request, 'promoter_create.html', {'categories': categories})
 
 def created_event(request):
+
     if request.method == 'POST':
         username = request.user
-
         event_name = request.POST["event-name"]
         event_type = request.POST["event-type"]
         category = request.POST["category-name"]
@@ -270,18 +291,22 @@ def created_event(request):
 
 
 def promoter_view(request):
+
     if request.user.is_authenticated:
-
-        username = request.user
-        query = UserProfile.objects.get(username=username)
-
-        if query.user_type == "p":
-            events = Event.objects.filter(promoter=username)
-            return render(request, 'promoter_view.html', {'events': events, 'type': 'promoter'})
-        else:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
             return redirect('home')
 
+    events = Event.objects.filter(promoter=request.user.id)
+    return render(request, 'promoter_view.html', {'events': events, 'type': 'promoter'})
+
 def delete_event(request, id):
+
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
+            return redirect('home')
+
     events = Event.objects.filter(id=id)
     return render(request, 'promoter_delete.html', {'events': events, 'type': 'edit'})
 
@@ -292,6 +317,12 @@ def deleted_event(request):
     return redirect('home')
 
 def edit_event(request, id):
+
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
+            return redirect('home')
+
     events = Event.objects.filter(id=id)
     return render(request, 'promoter_edit.html', {'events': events, 'type': 'edit'})
 
@@ -320,9 +351,20 @@ def edited_event(request):
 
     return redirect('home')
 
+
 def delete_promotion(request, id):
+    # make sure user is a promoter
+    # else redirect them home
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
+            return redirect('home')
+
     promotion = Promotion.objects.filter(id=id)
-    return render(request, 'delete_promotion.html', {'promotion': promotion})
+    if promotion.promoter_id == request.user.id:
+        return render(request, 'delete_promotion.html', {'promotion': promotion})
+    else:
+        return redirect('home')
 
 def deleted_promotion(request):
     if request.method == 'POST':
@@ -332,9 +374,16 @@ def deleted_promotion(request):
 
 
 def create_promotion(request):
-    username = request.user
-    events = Event.objects.filter(promoter=username.id)
+    # make sure user is a promoter
+    # else redirect them home
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
+            return redirect('home')
+
+    events = Event.objects.filter(promoter_id=request.user.id)
     return render(request, 'create_promotion.html', {'events': events})
+
 
 def created_promotion(request):
 
@@ -348,7 +397,6 @@ def created_promotion(request):
         end_date = request.POST["end-date"]
 
         event = Event.objects.get(name=event_name)
-        print(event.id)
 
         create = Promotion(
             promo_code=promotion_code,
@@ -364,16 +412,29 @@ def created_promotion(request):
 
 def view_promotions(request):
 
+    # make sure user is a promoter
+    # else redirect them home
     if request.user.is_authenticated:
-        username = request.user
-        id = username.id
-        promotions = Promotion.objects.filter(promoter_id=id)
-        return render(request, 'view_promotion.html', {'promotions': promotions})
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
+            return redirect('home')
+
+    promotions = Promotion.objects.filter(promoter_id=request.user.id)
+    return render(request, 'view_promotion.html', {'promotions': promotions})
 
 def edit_promotions(request, id):
-    promotions = Promotion.objects.filter(id=id)
 
+    # make sure user is a promoter
+    # else redirect them home
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "p":
+            return redirect('home')
+
+    promotions = Promotion.objects.get(id=id)
+    # check if promoter is owner of promotion being edited
     if promotions.promoter_id == request.user.id:
+        promotions = Promotion.objects.filter(id=id)
         return render(request, 'edit_promotion.html', {'promotions': promotions})
     else:
         return redirect('home')
