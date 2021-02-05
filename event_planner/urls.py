@@ -31,15 +31,12 @@ urlpatterns = [
     path('advanced_search/', advanced_search, name='advanced_search'),
     path('like_event', like_event, name='like_event'),
     path('unlike_event', unlike_event, name='unlike_event'),
-    path('password_recovery', password_recovery, name='password_recovery'),
     path('change_password', change_password),
     path('edit_profile/', edit_profile, name='edit_profile'),
     path('edited_profile/', edited_profile, name='edited_profile'),
     path('delete_profile/<int:id>', delete_profile, name='delete_profile'),
     path('deleted_profile', deleted_profile, name='deleted_profile'),
     path('notifications', notifications, name='notifications'),
-    path('purchase_tickets', purchase_tickets),
-    path('checkout', checkout),
     path('promoter/', promoter, name='promoter'),
     path('create_event/', create_event, name='create_event'),
     path('created_event/', created_event, name='created_event'),
@@ -55,7 +52,6 @@ urlpatterns = [
     path('edited_promotion/', edited_promotions, name='edited_promotion'),
     path('delete_promotion/<int:id>', delete_promotion, name="delete_promotion"),
     path('deleted_promotion/', deleted_promotion, name="deleted_promotion"),
-    path('view_reports', view_reports),
 ]
 
 

@@ -1,5 +1,3 @@
-{% extends "base.html" %}
-
 {% block content %}
 
 {% if user.is_authenticated  %}
@@ -9,6 +7,7 @@
 {% endif %}
 
 {% include "events.html" %}
+{% include "scripts.html" %}
 {% endblock %}
 
 <script>

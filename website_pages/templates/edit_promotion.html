@@ -1,5 +1,3 @@
-{% extends "base.html" %}
-
 {% block content %}
 
 {% if user.is_authenticated  %}
@@ -26,7 +24,7 @@
         <input type="submit" value="Submit">
     </form>
     {% endfor %}
-
+{% include "scripts.html" %}
 <script>
     $(document).ready(function(){
     });

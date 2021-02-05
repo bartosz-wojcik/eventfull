@@ -2,6 +2,9 @@
 
 {% block content %}
  <h1>Advanced Search</h1>
+
+{% include "message.html" %}
+
     <form method="POST" action="/">
         {% csrf_token %}
         <label for="event-name">Event Name</label>

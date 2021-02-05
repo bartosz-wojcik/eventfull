@@ -36,90 +36,139 @@ def home(request):
     """
     this function handles user interaction on the home page
     :param request: used for user information and retrieving parameters
-    :return: advanced search results, search results, redirect promoter to promoter page, redirect user to home page
+    :return: advanced search results, search results, redirect promoter to promoter page, redirect user to home
     """
     if request.method == 'POST' and 'type' in request.POST:
         # if type is equal to advanced
         # retrieve all events and if parameters are present, filter those parameters in the events query
         if request.POST["type"] == 'advanced':
+            try:
+                events = Event.objects.all()
+                # check to see if paramter exists and is not empty, then filter it in query
+                if 'event-name' in request.POST and request.POST['event-name'] != "":
 
-            events = Event.objects.all()
+                    events = events.filter(name__icontains=request.POST['event-name'])
 
-            if 'event-name' in request.POST and request.POST['event-name'] != "":
+                if 'venue-name' in request.POST and request.POST['venue-name'] != "":
+                    events = events.filter(venue_name__icontains=request.POST['venue-name'])
 
-                events = events.filter(name__icontains=request.POST['event-name'])
+                if 'event-type' in request.POST and request.POST['event-type'] != "":
+                    events = events.filter(event_type=request.POST['event-type'])
 
-            if 'venue-name' in request.POST and request.POST['venue-name'] != "":
-                events = events.filter(venue_name__icontains=request.POST['venue-name'])
+                if 'category-name' in request.POST and len(events) > 0:
+                    category = Category.objects.get(name=request.POST['category-name'])
+                    events = events.filter(category_id=category.id)
 
-            if 'event-type' in request.POST and request.POST['event-type'] != "":
-                events = events.filter(event_type=request.POST['event-type'])
+                if 'start-date' in request.POST and request.POST['start-date'] != "":
+                    events = events.filter(start_date=request.POST['start-date'])
 
-            if 'category-name' in request.POST and len(events) > 0:
-                category = Category.objects.get(name=request.POST['category-name'])
-                events = events.filter(category_id=category.id)
+                if 'end-date' in request.POST and request.POST['end-date'] != "":
+                    events = events.filter(end_date=request.POST['end-date'])
 
-            if 'start-date' in request.POST and request.POST['start-date'] != "":
-                events = events.filter(start_date=request.POST['start-date'])
-
-            if 'end-date' in request.POST and request.POST['end-date'] != "":
-                events = events.filter(end_date=request.POST['end-date'])
-
-            return render(request, 'home.html', {'events': events, 'type': 'user'})
+                if len(events) > 0:
+                    return render(request, 'home.html', {'events': events, 'type': 'user'})
+                else:
+                    message = 'No matching events found.'
+                    return render(request, 'home.html', {'message': message})
+            except:
+                message = 'Something went wrong with search. Try again later.'
+                return render(request, 'home.html', {'message': message})
 
         # if user is authenticated and performs a search, filter name of event from events query
         # and show filtered events to user
         elif request.POST["type"] == 'search':
-            query = request.POST.get('event-name', None)
-            events = Event.objects.filter(name__icontains=query)
-            return render(request, 'home.html', {'events': events, 'type': 'user'})
+            try:
+                query = request.POST.get('event-name', None)
+                events = Event.objects.filter(name__icontains=query)
+                if len(events) > 0:
+                    return render(request, 'home.html', {'events': events, 'type': 'user'})
+                else:
+                    message = 'No events found'
+                    return render(request, 'home.html', {'message': message})
+            except:
+                message = 'Something went wrong with search. Try again later.'
+                return render(request, 'home.html', {'message': message})
 
     # if user is authenticated
     elif request.user.is_authenticated:
         query = UserProfile.objects.get(id=request.user.id)
+
         # if they are promoter, redirect them to promoter page
         if query.user_type == "p":
             return render(request, 'promoter.html')
         # if they are a user, get all events, filter out events in their wish list and display page
         # with events not yet liked
         if query.user_type == "u":
-            events = Event.objects.all()
-            wishlist = WishList.objects.filter(user_id=request.user.id)
-            for item in wishlist:
-                events = events.exclude(name=item.event.name)
-
-            return render(request, 'home.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
+            try:
+                events = Event.objects.all()
+                wishlist = WishList.objects.filter(user_id=request.user.id)
+                for item in wishlist:
+                    events = events.exclude(name=item.event.name)
+                if (len(events) > 0):
+                    return render(request, 'home.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
+                else:
+                    message = 'Events cannot be loaded'
+                    return render(request, 'home.html', {'message': message})
+            except:
+                message = 'Events cannot be loaded'
+                return render(request, 'home.html', {'message': message})
     # else they are a unregistered user
     else:
         # else show all events in database
-        events = Event.objects.all()
-        return render(request, 'home.html', {'events': events, 'type': 'user'})
-
-
+        try:
+            events = Event.objects.all()
+            if len(events) > 0:
+                return render(request, 'home.html', {'events': events, 'type': 'user'})
+            else:
+                message = 'Events cannot be loaded'
+                return render(request, 'home.html', {'message': message})
+        except:
+            message = 'Events cannot be loaded'
+            return render(request, 'home.html', {'message': message})
 
 
 def advanced_search(request):
     """
-
-    :param request:
-    :return:
+    this function renders the advanced search page
+    :param request: used for user information and retrieving parameters
+    :return: advanced search page along with categories for selection input, else return message
     """
-    categories = Category.objects.all()
-    return render(request, 'advanced_search.html', {'categories': categories})
+    try:
+        categories = Category.objects.all()
+        if len(categories) > 0:
+            return render(request, 'advanced_search.html', {'categories': categories})
+        else:
+            message = 'Could not load data. Please try again later'
+            return render(request, 'advanced_search.html', {'message': message})
+    except:
+        message = 'There was an issue connecting to the database. Please try again later'
+        return render(request, 'advanced_search.html', {'message': message})
 
 
 def profile(request):
+    """
+    this function renders the user profile page
+    :param request: used for user information and retrieving parameters
+    :return: render user profile page, along with users wishlist items.
+    """
+    try:
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "u":
+                return redirect('home')
 
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "u":
+            wishlist = WishList.objects.filter(user_id=request.user.id)
+            if len(wishlist) > 0:
+                return render(request, 'profile.html', {'wishlist': wishlist, 'user_id': request.user.id})
+            else:
+                message = 'No events in your wishlist'
+                return render(request, 'profile.html', {'message': message})
+
+        else:
             return redirect('home')
-
-        wishlist = WishList.objects.filter(user_id=request.user.id)
-        return render(request, 'profile.html', {'wishlist': wishlist, 'user_id': request.user.id})
-
-    else:
-        return redirect('home')
+    except:
+        message = 'Error loading the profile page. Try again later.'
+        return render(request, 'profile.html', {'message': message})
 
 def like_event(request):
 
@@ -147,11 +196,6 @@ def unlike_event(request):
         ).delete()
 
     return HttpResponse("unliked")
-
-
-def password_recovery(request):
-
-    return HttpResponse("password")
 
 def change_password(request):
     return HttpResponse("Change your password!")
@@ -225,11 +269,12 @@ def deleted_profile(request):
 
 def notifications(request):
 
+    # check if user, else return to home
     if request.user.is_authenticated:
-        # query = UserProfile.objects.get(id=request.user.id)
-        # if not query.user_type == "u":
-        #     return redirect('home')
-        #
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "u":
+            return redirect('home')
+
         query = []
         wishlist = WishList.objects.filter(user_id=request.user.id)
         if len(wishlist) > 0:
@@ -239,20 +284,12 @@ def notifications(request):
 
         promotions = Promotion.objects.filter(event_id__in=query)
 
-        for i in promotions:
-            print(i.start_date, i.description, i.promo_code)
-
         return render(request, 'notifications.html', {'promotions': promotions})
 
 
 
     return render(request, 'notifications.html')
 
-def purchase_tickets(request):
-    return HttpResponse("Purchase your tickets!")
-
-def checkout(request):
-    return HttpResponse("See your notifcations!")
 
 def promoter(request):
 
@@ -487,7 +524,5 @@ def edited_promotions(request):
 
         return redirect('home')
 
-def view_reports(request):
-    return HttpResponse("View promotions!")
 
 
