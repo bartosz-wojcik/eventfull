@@ -149,7 +149,7 @@ def profile(request):
     """
     this function renders the user profile page
     :param request: used for user information and retrieving parameters
-    :return: render user profile page, along with users wishlist items.
+    :return: render user profile page and wishlist items if user has any liked, otherwise show no liked events
     """
     try:
         if request.user.is_authenticated:
@@ -163,7 +163,6 @@ def profile(request):
             else:
                 message = 'No events in your wishlist'
                 return render(request, 'profile.html', {'message': message})
-
         else:
             return redirect('home')
     except:
@@ -171,31 +170,44 @@ def profile(request):
         return render(request, 'profile.html', {'message': message})
 
 def like_event(request):
+    """
+    this function gets an event id and adds that event to the users wishlist
+    :param request: used for user information and retrieving parameters
+    :return: returns a message upon success or error message if something goes wrong.
+    """
 
     if request.method == 'GET':
+        try:
+            event_id = request.GET["id"]
+            wishlist = WishList(
+                user=UserProfile.objects.get(id=request.user.id),
+                event=Event.objects.get(id=event_id)
+            )
+            wishlist.save()
+            return HttpResponse("Event has been added to WishList!")
+        except:
+            message = 'Unable to like Event. Try again later.'
+            return render(request, 'home.html', {'message': message})
 
-        event_id = request.GET["id"]
-        user = request.user
-
-        wishlist = WishList(
-            user=UserProfile.objects.get(id=user.id),
-            event=Event.objects.get(id=event_id)
-        )
-        wishlist.save()
-
-        return HttpResponse("liked")
 
 def unlike_event(request):
-
+    """
+    this function gets an event id and removes that event from the users wishlist
+    :param request: used for user information and retrieving parameters
+    :return: returns a message upon success or error message if something goes wrong.
+    """
     if request.method == 'GET':
-        event_id = request.GET["id"]
-
-        WishList.objects.filter(
-            user_id=UserProfile.objects.get(id=request.user.id),
-            event_id=Event.objects.get(id=event_id)
-        ).delete()
-
-    return HttpResponse("unliked")
+        try:
+            event_id = request.GET["id"]
+            WishList.objects.filter(
+                user_id=UserProfile.objects.get(id=request.user.id),
+                event_id=Event.objects.get(id=event_id)
+            ).delete()
+            message = "Event has been removed from WishList"
+            return HttpResponse({'message': message})
+        except:
+            message = 'Unable to Unlike Event. Try again later.'
+            return render(request, 'home.html', {'message': message})
 
 def change_password(request):
     return HttpResponse("Change your password!")
