@@ -236,12 +236,18 @@ def notifications(request):
         # if not query.user_type == "u":
         #     return redirect('home')
         #
-        # wishlist = WishList.objects.filter(user_id=request.user.id)
-        #
-        # for i in wishlist:
-        #     print(i.created)
+        query = []
+        wishlist = WishList.objects.filter(user_id=request.user.id)
+        if len(wishlist) > 0:
+            for i in wishlist:
+                query.append(i.event_id)
 
-        return redirect('home')
+        promotions = Promotion.objects.filter(event_id__in=query)
+
+        for i in promotions:
+            print(i.start_date, i.description, i.promo_code)
+
+        return render(request, 'notifications.html', {'promotions': promotions})
 
 
 

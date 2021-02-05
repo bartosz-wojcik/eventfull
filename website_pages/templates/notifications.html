@@ -5,6 +5,14 @@
     <title>Notifications</title>
 </head>
 <body>
+    <table>
+        {% for item in promotions %}
+        <tr>
+            <td>{{item.promo_code}}</td>
 
+        </tr>
+
+        {% endfor %}
+    </table>
 </body>
 </html>
