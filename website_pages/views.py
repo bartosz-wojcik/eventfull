@@ -6,8 +6,6 @@ from website_pages.forms import CustomUserCreationForm
 from website_pages.models import Event, UserProfile, Category, Promotion, WishList
 
 # Create your views here.
-
-
 def register(request):
     """
     This function allows the user to register an account
@@ -119,8 +117,13 @@ def advanced_search(request):
 def profile(request):
 
     if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "u":
+            return redirect('home')
+
         wishlist = WishList.objects.filter(user_id=request.user.id)
         return render(request, 'profile.html', {'wishlist': wishlist, 'user_id': request.user.id})
+
     else:
         return redirect('home')
 
@@ -159,11 +162,12 @@ def password_recovery(request):
 def change_password(request):
     return HttpResponse("Change your password!")
 
-def user_logged_in(request):
-
-    return HttpResponse("View in more ways!")
-
 def edit_profile(request):
+
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "u":
+            return redirect('home')
 
     if request.user.is_authenticated:
         return render(request, 'edit_profile.html')
@@ -195,26 +199,53 @@ def edited_profile(request):
     return redirect('profile')
 
 def delete_profile(request, id):
-    if request.user.is_authenticated:
 
-        user_profile = UserProfile.objects.get(id=id)
-        return render(request, 'delete_profile.html', {'user_profile': user_profile})
+    if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "u":
+            return redirect('home')
+
+    if request.user.is_authenticated:
+        if request.user.id == id:
+            user_profile = UserProfile.objects.get(id=id)
+            return render(request, 'delete_profile.html', {'user_profile': user_profile})
+        else:
+            return redirect ('home')
     else:
-        return redirect ('home')
+        return redirect('home')
 
 def deleted_profile(request):
 
     if request.user.is_authenticated:
+        query = UserProfile.objects.get(id=request.user.id)
+        if not query.user_type == "u":
+            return redirect('home')
 
-        user_profile = UserProfile.objects.get(id=id)
-        return render(request, 'delete_profile.html', {'user_profile': user_profile})
-    else:
-        return redirect ('home')
+    if request.user.is_authenticated:
+
+        UserProfile.objects.get(id=request.user.id).delete()
+
+        return redirect('home')
 
 
 
 def notifications(request):
-    return HttpResponse("See your notifcations!")
+
+    if request.user.is_authenticated:
+        # query = UserProfile.objects.get(id=request.user.id)
+        # if not query.user_type == "u":
+        #     return redirect('home')
+        #
+        # wishlist = WishList.objects.filter(user_id=request.user.id)
+        #
+        # for i in wishlist:
+        #     print(i.created)
+
+        return redirect('home')
+
+
+
+    return render(request, 'notifications.html')
 
 def purchase_tickets(request):
     return HttpResponse("Purchase your tickets!")
