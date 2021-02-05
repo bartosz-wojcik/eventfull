@@ -69,7 +69,7 @@ def home(request):
 
         # if user is authenticated and performs a search, filter name of event from events query
         # and show filtered events to user
-        elif request.user.is_authenticated and request.POST["type"] == 'search':
+        elif request.POST["type"] == 'search':
             query = request.POST.get('event-name', None)
             events = Event.objects.filter(name__icontains=query)
             return render(request, 'home.html', {'events': events, 'type': 'user'})
@@ -91,15 +91,9 @@ def home(request):
             return render(request, 'home.html', {'events': events, 'wishlist': wishlist, 'type': 'user'})
     # else they are a unregistered user
     else:
-        if request.method == 'POST':
-            # performed a search, filter name of event from events query and show filtered events to user
-            query = request.POST.get('event-name', None)
-            events = Event.objects.filter(name__icontains=query)
-            return render(request, 'home.html', {'events': events, 'type': 'user'})
-        else:
-            # else show all events in database
-            events = Event.objects.all()
-            return render(request, 'home.html', {'events': events, 'type': 'user'})
+        # else show all events in database
+        events = Event.objects.all()
+        return render(request, 'home.html', {'events': events, 'type': 'user'})
 
 
 
@@ -240,6 +234,7 @@ def notifications(request):
         wishlist = WishList.objects.filter(user_id=request.user.id)
         if len(wishlist) > 0:
             for i in wishlist:
+                print(i.event_id)
                 query.append(i.event_id)
 
         promotions = Promotion.objects.filter(event_id__in=query)

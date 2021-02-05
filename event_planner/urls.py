@@ -25,6 +25,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='base.html')),
+    path('change_password/', auth_views.PasswordChangeForm),
     path('signup/', register, name='register'),
     path('profile/', profile, name='profile'),
     path('advanced_search/', advanced_search, name='advanced_search'),
