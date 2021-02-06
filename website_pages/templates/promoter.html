@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="container">
-        <h1>Eventfull - Promoter Portal</h1>
+    <h1><a href="/">Eventfull - Promoter Portal</a></h1>
         <div class="container">
         <a href="/promoter_view">View Events</a>
         <a href="/create_event">Create Event</a>
@@ -14,6 +14,8 @@
         <a href="/create_promotion">Create Promotion</a>
         <a href="/logout">Logout</a>
     </div>
+
+{% include "message.html" %}
 {% include "scripts.html" %}
 {% block content %}{% endblock %}
 </body>

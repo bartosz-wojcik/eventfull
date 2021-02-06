@@ -391,7 +391,7 @@ def created_event(request):
     this function creates an event from user input
     check if free or paid event and create accordingly
     :param request: used for user information and retrieving parameters
-    :return: user to home
+    :return: user to home after creating a new event
     """
     try:
         if request.method == 'POST':
@@ -448,6 +448,12 @@ def created_event(request):
 
 
 def promoter_view(request):
+    """
+    this function renders the event view page for the promoter along with events associated with the promoter
+    (sorry for the horrid  template names, im too scared to refactor anything at this point - should be view_events)
+    :param request: used for user information and retrieving parameters
+    :return:
+    """
     try:
         if request.user.is_authenticated:
             query = UserProfile.objects.get(id=request.user.id)
@@ -465,158 +471,262 @@ def promoter_view(request):
         return render(request, 'home.html', {'message': message})
 
 
-
 def delete_event(request, id):
+    """
+    this function rends the delete event page for a promoter
+    :param request: used for user information and retrieving parameters
+    :param id: id of event to be deleted
+    :return: delete page with events of the promoter
+    """
+    try:
+        # check to see if they are promoter, otherwise redirect them to home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
-            return redirect('home')
+        events = Event.objects.filter(id=id)
+        return render(request, 'promoter_delete.html', {'events': events, 'type': 'edit'})
+    except:
+        message = "Something went wrong while trying to load delete events page. Try again later."
+        return render(request, 'home.html', {'message': message})
 
-    events = Event.objects.filter(id=id)
-    return render(request, 'promoter_delete.html', {'events': events, 'type': 'edit'})
 
 def deleted_event(request):
-    if request.method == 'POST':
-        id = request.POST["pk"]
-        Event.objects.filter(id=id).delete()
-    return redirect('home')
+    """
+    this function deletes a event from the database
+    :param request: used for user information and retrieving parameters
+    :return: returns the promoter to home after deleting
+    """
+    try:
+        if request.method == 'POST':
+            id = request.POST["pk"]
+            Event.objects.filter(id=id).delete()
+        return redirect('home')
+    except:
+        message = "Something went wrong when trying to delete event. Try again later."
+        return render(request, 'home.html', {'message': message})
+
 
 def edit_event(request, id):
+    """
+    this function renders the edit event page for a promoter, along with event data
+    :param request: used for user information and retrieving parameters
+    :param id: id of event being edited
+    :return: edit event page along with the event being updated
+    """
+    try:
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
-            return redirect('home')
-
-    events = Event.objects.filter(id=id)
-    return render(request, 'promoter_edit.html', {'events': events, 'type': 'edit'})
+        events = Event.objects.filter(id=id)
+        return render(request, 'promoter_edit.html', {'events': events, 'type': 'edit'})
+    except:
+        message = "Something went wrong while loading edit event page. Try again later."
+        return render(request, 'home.html', {'message': message})
 
 @csrf_protect
 def edited_event(request):
-    if request.method == 'POST':
-        id = request.POST["pk"]
-        event_name = request.POST["event-name"]
-        description = request.POST["description"]
-        venue_name = request.POST["venue-name"]
-        performer_names = request.POST["performer-names"]
-        ticket_price = request.POST["ticket-price"]
-        start_date = request.POST["start-date"]
-        end_date = request.POST["end-date"]
+    """
+    this function edits an event after receiving parameters from user
+    :param request: used for user information and retrieving parameters
+    :return: update event and send user back home
+    """
+    try:
+        if request.method == 'POST':
+            id = request.POST["pk"]
+            event_name = request.POST["event-name"]
+            description = request.POST["description"]
+            venue_name = request.POST["venue-name"]
+            performer_names = request.POST["performer-names"]
+            ticket_price = request.POST["ticket-price"]
+            start_date = request.POST["start-date"]
+            end_date = request.POST["end-date"]
 
-        # update the event
-        update = Event.objects.get(id=id)
-        update.name = event_name
-        update.description = description
-        update.venue_name = venue_name
-        update.performer_names = performer_names
-        update.ticket_price = ticket_price
-        update.start_date = start_date
-        update.end_date = end_date
-        update.save()
-
-    return redirect('home')
+            # update the event
+            update = Event.objects.get(id=id)
+            update.name = event_name
+            update.description = description
+            update.venue_name = venue_name
+            update.performer_names = performer_names
+            update.ticket_price = ticket_price
+            update.start_date = start_date
+            update.end_date = end_date
+            update.save()
+        return redirect('home')
+    except:
+        message = "Something went wrong while updating the event. Try again later."
+        return render(request, 'home.html', {'message': message})
 
 
 def delete_promotion(request, id):
-    # make sure user is a promoter
-    # else redirect them home
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
-            return redirect('home')
+    """
+    this function takes the promoter to a delete promotion page with associated event id
+    :param request: used for user information and retrieving parameters
+    :param id: promotion id to be deleted
+    :return: render delete promotion page with promotion data
+    """
+    try:
+        # check to see if they are promoter, otherwise redirect them to home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    promotion = Promotion.objects.filter(id=id)
-    return render(request, 'delete_promotion.html', {'promotion': promotion})
+        promotion = Promotion.objects.filter(id=id)
+        return render(request, 'delete_promotion.html', {'promotion': promotion})
+    except:
+        message = "Something went wrong while loading delete promotion page. Try again later."
+        return render(request, 'home.html', {'message': message})
+
 
 def deleted_promotion(request):
-    if request.method == 'POST':
-        id = request.POST["pk"]
-        Promotion.objects.filter(id=id).delete()
-    return redirect('home')
+    """
+    this function deletes a promotion
+    :param request: used for user information and retrieving parameters
+    :return: delete promotion specified by promoter and return them to home
+    """
+    try:
+        if request.method == 'POST':
+            id = request.POST["pk"]
+            Promotion.objects.filter(id=id).delete()
+        return redirect('home')
+    except:
+        message = "Something went wrong while tyring to delete promotion. Try again later."
+        return render(request, 'home.html', {'message': message})
 
 
 def create_promotion(request):
-    # make sure user is a promoter
-    # else redirect them home
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
-            return redirect('home')
+    """
+    this function takes the promoter to a create promotion page
+    :param request: used for user information and retrieving parameters
+    :return: render create promotion page along with event data
+    """
+    try:
+        # check to see if they are promoter, otherwise redirect them to home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    events = Event.objects.filter(promoter_id=request.user.id)
-    return render(request, 'create_promotion.html', {'events': events})
+        events = Event.objects.filter(promoter_id=request.user.id)
+        return render(request, 'create_promotion.html', {'events': events})
+    except:
+        message = "Something went wrong while tyring to load create promotion page. Try again later."
+        return render(request, 'home.html', {'message': message})
 
 
 def created_promotion(request):
+    """
+    this function creates a promotion with parameters passed by the promoter
+    :param request: used for user information and retrieving parameters
+    :return:
+    """
+    try:
+        if request.method == 'POST':
+            username = request.user
 
-    if request.method == 'POST':
-        username = request.user
+            event_name = request.POST["event-name"]
+            description = request.POST["description"]
+            promotion_code = request.POST["promotion-code"]
+            start_date = request.POST["start-date"]
+            end_date = request.POST["end-date"]
 
-        event_name = request.POST["event-name"]
-        description = request.POST["description"]
-        promotion_code = request.POST["promotion-code"]
-        start_date = request.POST["start-date"]
-        end_date = request.POST["end-date"]
+            event = Event.objects.get(name=event_name)
 
-        event = Event.objects.get(name=event_name)
+            create = Promotion(
+                promo_code=promotion_code,
+                description=description,
+                promoter = UserProfile.objects.get(id=username.id),
+                event=Event.objects.get(id=event.id),
+                start_date=start_date,
+                end_date=end_date)
 
-        create = Promotion(
-            promo_code=promotion_code,
-            description=description,
-            promoter = UserProfile.objects.get(id=username.id),
-            event=Event.objects.get(id=event.id),
-            start_date=start_date,
-            end_date=end_date)
+            create.save()
 
-        create.save()
+        return redirect('home')
+    except:
+        message = "Something went wrong while creating the promotion. Try again later."
+        return render(request, 'home.html', {'message': message})
 
-    return redirect('home')
 
 def view_promotions(request):
+    """
+    this function takes the promoter to the view promotions page
+    :param request: used for user information and retrieving parameters
+    :return: render view promotions page along with promotion data
+    """
+    try:
+        # check to see if they are promoter, otherwise redirect them to home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    # make sure user is a promoter
-    # else redirect them home
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
-            return redirect('home')
+        promotions = Promotion.objects.filter(promoter_id=request.user.id)
+        if len(promotions) > 0:
+            return render(request, 'view_promotion.html', {'promotions': promotions})
+        else:
+            message = "There are no promotions to view. Create some promotions!"
+            return render(request, 'view_promotion.html', {'message': message})
+    except:
+        message = "Something went wrong while trying load view promotions page. Try again later."
+        return render(request, 'home.html', {'message': message})
 
-    promotions = Promotion.objects.filter(promoter_id=request.user.id)
-    return render(request, 'view_promotion.html', {'promotions': promotions})
 
 def edit_promotions(request, id):
+    """
+    this function takes the promoter to a edit promotions page associated with the promotion id
+    :param request: used for user information and retrieving parameters
+    :param id: id of the promotion being updated
+    :return:
+    """
+    try:
+        # check to see if they are promoter, otherwise redirect them to home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    # make sure user is a promoter
-    # else redirect them home
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
+        # check to see if promoter is owner of the promotion
+        promotions = Promotion.objects.get(id=id)
+        # check if promoter is owner of promotion being edited
+        if promotions.promoter_id == request.user.id:
+            promotions = Promotion.objects.filter(id=id)
+            return render(request, 'edit_promotion.html', {'promotions': promotions})
+        else:
             return redirect('home')
+    except:
+        message = "Something went wrong while trying load edit promotions page. Try again later."
+        return render(request, 'home.html', {'message': message})
 
-    promotions = Promotion.objects.get(id=id)
-    # check if promoter is owner of promotion being edited
-    if promotions.promoter_id == request.user.id:
-        promotions = Promotion.objects.filter(id=id)
-        return render(request, 'edit_promotion.html', {'promotions': promotions})
-    else:
-        return redirect('home')
 
 def edited_promotions(request):
-    if request.method == 'POST':
-        id = request.POST["pk"]
-        description = request.POST["description"]
-        start_date = request.POST["start-date"]
-        end_date = request.POST["end-date"]
+    """
+    this function edits a promotion with paramters passed by promoter
+    :param request: used for user information and retrieving parameters
+    :return: save edits made to the promotion and send promoter to home
+    """
+    try:
+        if request.method == 'POST':
+            id = request.POST["pk"]
+            description = request.POST["description"]
+            start_date = request.POST["start-date"]
+            end_date = request.POST["end-date"]
 
-        update = Promotion.objects.get(id=id)
-        #update promotion parameters
-        update.description = description
-        update.end_date = end_date
-        update.start_date = start_date
-        update.save()
+            update = Promotion.objects.get(id=id)
+            #update promotion parameters
+            update.description = description
+            update.end_date = end_date
+            update.start_date = start_date
+            update.save()
 
-        return redirect('home')
+            return redirect('home')
+    except:
+        message = "Something went wrong while editing the promotion. Try again later."
+        return render(request, 'home.html', {'message': message})
 
 
 
