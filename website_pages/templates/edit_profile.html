@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Profile</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
+<br />
+<br />
 
     <form method="post" action="{% url 'edited_profile'%}">
         {% csrf_token %}
@@ -23,5 +21,4 @@
         <input type="submit" value="Submit">
     </form>
 
-</body>
-</html>
+{% endblock %}

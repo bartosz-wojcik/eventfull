@@ -1,12 +1,8 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Notifications</title>
-</head>
-<body>
-    <table>
+{% extends "base.html" %}
+{% block content %}
+<br />
+<br />
+    <table class="table" style="text-align:center;">
         <tr>
             <th>Event Name</th>
             <th>Start Date</th>
@@ -22,8 +18,8 @@
             <td>{{item.description}}</td>
             <td>{{item.promo_code}}</td>
         </tr>
-
         {% endfor %}
     </table>
-</body>
-</html>
+{% include "message.html" %}
+{% include "scripts.html"%}
+{% endblock %}

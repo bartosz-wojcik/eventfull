@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Delete Profile</title>
-</head>
-<body>
-
+{% extends "base.html" %}
+{% block content %}
+<br />
+<br />
     <form method="post" action="{% url 'deleted_profile'%}">
         {% csrf_token %}
         <p> Are you sure you want to delete your account {{ user_profile.username }}?</p>
@@ -14,6 +10,5 @@
          <br />
         <input type="submit" value="Yes, Delete">
     </form>
-
-</body>
-</html>
+{% include "message.html" %}
+{% endblock%}

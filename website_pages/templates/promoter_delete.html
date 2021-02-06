@@ -1,8 +1,8 @@
-{% block content %}
-{% if user.is_authenticated  %}
-<a href="/logout">Logout</a>
-{% endif %}
+{% extends "promoter.html" %}
 
+{% block content %}
+<br />
+<br />
     {% for item in events %}
     <form method="post" action="{% url 'deleted_event'%}">
         {% csrf_token %}
@@ -20,7 +20,7 @@
     </form>
     {% endfor %}
 
-{% include "scripts.html" %}
+
 <script>
     $(document).ready(function(){
     });

@@ -1,19 +1,18 @@
+{% extends "promoter.html" %}
+
+<br />
+<br />
 {% block content %}
-
-{% if user.is_authenticated  %}
-<a href="/logout">Logout</a>
-{% endif %}
-
     {% for item in promotions %}
     <form method="post" action="{% url 'edited_promotion'%}">
         {% csrf_token %}
         <br />
         <label for="event-name">Event Name: {{ item.event.name }}</label>
         <br />
-        <label for="description">Event Name</label>
+        <label for="description">Description</label>
         <textarea rows="4" cols="50" name="description">{{ item.description }}</textarea>
         <br />
-         <label for="start-date">Start Date</label>
+         <label for="start-dat  e">Start Date</label>
         <input type="datetime-local" value="{{ item.start_date|date:'c' }}" name="start-date">
         <br />
         <label for="start-date">End Date</label>
@@ -24,7 +23,8 @@
         <input type="submit" value="Submit">
     </form>
     {% endfor %}
-{% include "scripts.html" %}
+
+{% include "message.html" %}
 <script>
     $(document).ready(function(){
     });

@@ -1,25 +1,32 @@
+{% extends "promoter.html" %}
+
 {% block content %}
-
-{% if user.is_authenticated  %}
-<a href="/logout">Logout</a>
-{% endif %}
-
     {% for item in events %}
     <form method="post" action="{% url 'edited_event'%}">
         {% csrf_token %}
         <br />
+        <label for="event-name">Event Name</label>
         <input value="{{ item.name }}" name="event-name">
         <br />
+         <label for="event-description">Description</label>
         <textarea rows="4" cols="50" name="description">{{ item.description }}</textarea>
         <br />
+         <label for="venue-name">Venue Name</label>
         <input value="{{ item.venue_name }}" name="venue-name">
         <br />
+         <label for="performer-names">Performer Names</label>
         <input value="{{ item.performer_names }}" name="performer-names">
         <br />
+         <label for="ticket-price">Ticket Price</label>
         <input type="number" value="{{ item.ticket_price }}" name="ticket-price">
         <br />
+        <label for="ticket-price">Ticket Quantity</label>
+        <input type="number" value="{{ item.ticket_quantity }}" name="ticket-price">
+        <br />
+         <label for="start-date">Start Date</label>
         <input type="datetime-local" value="{{ item.start_date|date:'c' }}" name="start-date">
         <br />
+         <label for="end-date">End Date</label>
         <input type="datetime-local" value="{{ item.end_date|date:'c' }}" name="end-date">
         <br />
         <input type="hidden" value="{{ item.pk }}" name="pk">

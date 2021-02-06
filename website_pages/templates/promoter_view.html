@@ -1,17 +1,6 @@
+{% extends "promoter.html" %}
 {% block content %}
 
-{% if user.is_authenticated  %}
-<a href="/logout">Logout</a>
-
-
-{% endif %}
-
 {% include "events.html" %}
-{% include "scripts.html" %}
+
 {% endblock %}
-
-<script>
-    $(document).ready(function(){
-    });
-
-</script>

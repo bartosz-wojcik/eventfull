@@ -5,7 +5,12 @@ from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
 from website_pages.models import Event, UserProfile, Category, Promotion, WishList
 
-# Create your views here.
+"""
+The views.py files with rendering pages and performing logic based on user interaction
+Each function serves templates and controls the application based off of users actions
+"""
+
+
 def register(request):
     """
     This function allows the user to register an account
@@ -13,7 +18,6 @@ def register(request):
     :param request: used for user information and retrieving parameters
     :return: render signup.html and the form fields
     """
-
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         # if the form input is valid
@@ -149,7 +153,7 @@ def profile(request):
     """
     this function renders the user profile page
     :param request: used for user information and retrieving parameters
-    :return: render user profile page and wishlist items if user has any liked, otherwise show no liked events
+    :return: render user profile page and wishlist items if user has any liked events, otherwise show no liked events
     """
     try:
         if request.user.is_authenticated:
@@ -168,6 +172,7 @@ def profile(request):
     except:
         message = 'Error loading the profile page. Try again later.'
         return render(request, 'profile.html', {'message': message})
+
 
 def like_event(request):
     """
@@ -209,177 +214,257 @@ def unlike_event(request):
             message = 'Unable to Unlike Event. Try again later.'
             return render(request, 'home.html', {'message': message})
 
+
 def change_password(request):
+    """
+    incomplete. Server setup and issues associated with that cost me wayyyyyyyy to much time :(.
+    :param request:
+    :return:
+    """
     return HttpResponse("Change your password!")
 
+
 def edit_profile(request):
-
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "u":
-            return redirect('home')
-
-    if request.user.is_authenticated:
+    """
+    this function renders the edit_profile page for a logged in user
+    :param request: used for user information and retrieving parameters
+    :return: render edit profile page
+    """
+    try:
+        # check if logged in and user, else redirect home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "u":
+                return redirect('home')
+        # user information is not sent, they are only allowed to edit f name, l name and email
         return render(request, 'edit_profile.html')
-    else:
-        return redirect('home')
+    except:
+        message = "Something went wrong while Editing profile. Try again later."
+        return render(request, 'profile.html', {'message': message})
+
 
 def edited_profile(request):
     """
     this functions edits the users profiles - first name, last name and email
-    if the paramters are passed, they will be updated
-
-    :param request:
+    if the paramters are passed, they will be updated in the UserProfile
+    :param request: used for user information and retrieving parameters
     :return:  user is redirected back to profile
     """
-
     if request.method == 'POST':
-        update = UserProfile.objects.get(id=request.user.id)
-        if 'first-name' in request.POST and request.POST['first-name'] != "":
-            update.first_name = request.POST['first-name']
+        try:
+            update = UserProfile.objects.get(id=request.user.id)
+            if 'first-name' in request.POST and request.POST['first-name'] != "":
+                update.first_name = request.POST['first-name']
 
-        if 'last-name' in request.POST and request.POST['last-name'] != "":
-            update.first_name = request.POST['last-name']
+            if 'last-name' in request.POST and request.POST['last-name'] != "":
+                update.first_name = request.POST['last-name']
 
-        if 'email' in request.POST and request.POST['email'] != "":
-            update.first_name = request.POST['email']
+            if 'email' in request.POST and request.POST['email'] != "":
+                update.first_name = request.POST['email']
 
-        update.save()
+            update.save()
+            return redirect('profile')
+        except:
+            message = "Something went wrong while updating Profile. Try again later."
+            return render(request, 'profile.html', {'message': message})
 
-    return redirect('profile')
 
 def delete_profile(request, id):
+    """
+    this function renders the delete profile page for user
+    :param request: used for user information and retrieving parameters
+    :param id: the id of user deleting profile
+    :return: render delete profile page along with user profile data
+    """
+    try:
+        # if user is logged in and is of type user proceed, else return them home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "u":
+                return redirect('home')
 
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "u":
-            return redirect('home')
-
-    if request.user.is_authenticated:
-        if request.user.id == id:
-            user_profile = UserProfile.objects.get(id=id)
-            return render(request, 'delete_profile.html', {'user_profile': user_profile})
+            # if user deleting profile is owner of profile
+            if request.user.id == id:
+                user_profile = UserProfile.objects.get(id=id)
+                return render(request, 'delete_profile.html', {'user_profile': user_profile})
+            else:
+                return redirect('home')
         else:
-            return redirect ('home')
-    else:
-        return redirect('home')
+            return redirect('home')
+    except:
+        message = "Something went wrong while loading Profile data. Try again later."
+        return render(request, 'profile.html', {'message': message})
+
 
 def deleted_profile(request):
-
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "u":
-            return redirect('home')
-
-    if request.user.is_authenticated:
+    """
+    this function deletes a users profile
+    :param request: used for user information and retrieving parameters
+    :return: delete profile and return user back to home
+    """
+    try:
+        # if user is logged in and is of type user proceed, else return them home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "u":
+                return redirect('home')
 
         UserProfile.objects.get(id=request.user.id).delete()
-
         return redirect('home')
-
+    except:
+        message = "Something went wrong while deleting Profile. Try again later."
+        return render(request, 'home', {'message': message})
 
 
 def notifications(request):
+    """
+    this functions shows user promotions available for the events on the users wishlist
+    :param request: used for user information and retrieving parameters
+    :return: notifications page along with promotions from events in the users wishlist
+    """
+    try:
+        # if user is logged in and is of type user proceed, else return them home
+        if request.user.is_authenticated:
+            event_id_query = UserProfile.objects.get(id=request.user.id)
+            if not event_id_query.user_type == "u":
+                return redirect('home')
 
-    # check if user, else return to home
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "u":
-            return redirect('home')
+            # holds events ids
+            event_id_query = []
+            wishlist = WishList.objects.filter(user_id=request.user.id)
+            if len(wishlist) > 0:
+                for i in wishlist:
+                    event_id_query.append(i.event_id)
+            promotions = Promotion.objects.filter(event_id__in=event_id_query)
 
-        query = []
-        wishlist = WishList.objects.filter(user_id=request.user.id)
-        if len(wishlist) > 0:
-            for i in wishlist:
-                print(i.event_id)
-                query.append(i.event_id)
-
-        promotions = Promotion.objects.filter(event_id__in=query)
-
-        return render(request, 'notifications.html', {'promotions': promotions})
-
-
-
-    return render(request, 'notifications.html')
+            if len(promotions) > 0:
+                return render(request, 'notifications.html', {'promotions': promotions})
+            else:
+                message = "No promotions have been found. Like events to see promotions"
+                return render(request, 'notifications.html', {'message': message})
+    except:
+        message = "Something went wrong while retrieving promotions. Try again later."
+        return render(request, 'profile.html', {'message': message})
 
 
 def promoter(request):
-
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
+    """
+     this functions redirects user to promoters page
+     :param request: used for user information and retrieving parameters
+     :return: redirect to promoter page, if they are a promoter, else send them to home
+    """
+    # if user is logged in and is of type promoter proceed, else return them home
+    try:
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
+        else:
             return redirect('home')
-    else:
-        return redirect('home')
+    except:
+        message = "Something went wrong while loading the promoter page. Try again later."
+        return render(request, 'home.html', {'message': message})
 
 
 def create_event(request):
+    """
+    this functions renders the create event page for a promoter
+    :param request: used for user information and retrieving parameters
+    :return:  event create page with categories available for events
+    """
+    try:
+        # if user is logged in and is of type promoter proceed, else return them home
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
-            return redirect('home')
+        categories = Category.objects.all()
+        return render(request, 'promoter_create.html', {'categories': categories})
+    except:
+        message = "Something went wrong while creating user"
+        return render(request, 'home.html', {'message': message})
 
-    categories = Category.objects.all()
-    return render(request, 'promoter_create.html', {'categories': categories})
 
 def created_event(request):
+    """
+    this function creates an event from user input
+    check if free or paid event and create accordingly
+    :param request: used for user information and retrieving parameters
+    :return: user to home
+    """
+    try:
+        if request.method == 'POST':
+            username = request.user
+            event_name = request.POST["event-name"]
+            event_type = request.POST["event-type"]
+            category = request.POST["category-name"]
+            description = request.POST["description"]
+            venue_name = request.POST["venue-name"]
+            performer_names = request.POST["performer-names"]
+            ticket_price = request.POST["ticket-price"]
+            ticket_quantity = request.POST["ticket-quantity"]
+            start_date = request.POST["start-date"]
+            end_date = request.POST["end-date"]
+            category = Category.objects.get(name=category)
 
-    if request.method == 'POST':
-        username = request.user
-        event_name = request.POST["event-name"]
-        event_type = request.POST["event-type"]
-        category = request.POST["category-name"]
-        description = request.POST["description"]
-        venue_name = request.POST["venue-name"]
-        performer_names = request.POST["performer-names"]
-        ticket_price = request.POST["ticket-price"]
-        ticket_quantity = request.POST["ticket-quantity"]
-        start_date = request.POST["start-date"]
-        end_date = request.POST["end-date"]
-        category = Category.objects.get(name=category)
+            # if the event is free
+            # apply parameters and create event
+            if event_type == 'f':
+                create = Event(
+                    name=event_name,
+                    description=description,
+                    promoter=UserProfile.objects.get(id=username.id),
+                    category=Category.objects.get(id=category.id),
+                    venue_name=venue_name,
+                    event_type=event_type,
+                    performer_names=performer_names,
+                    ticket_price=0.00,
+                    ticket_quantity=0,
+                    start_date=start_date,
+                    end_date=end_date)
+                create.save()
+            # else its a paid event
+            # apply parameters and create event
+            else:
+                create = Event(
+                    name=event_name,
+                    description=description,
+                    promoter=UserProfile.objects.get(id=username.id),
+                    category=Category.objects.get(id=category.id),
+                    venue_name=venue_name,
+                    event_type=event_type,
+                    performer_names=performer_names,
+                    ticket_price=ticket_price,
+                    ticket_quantity=ticket_quantity,
+                    start_date=start_date,
+                    end_date=end_date)
+                create.save()
 
-        if event_type == 'f':
-            create = Event(
-                name=event_name,
-                description=description,
-                promoter=UserProfile.objects.get(id=username.id),
-                category=Category.objects.get(id=category.id),
-                venue_name=venue_name,
-                event_type=event_type,
-                performer_names=performer_names,
-                ticket_price=0.00,
-                ticket_quantity=0,
-                start_date=start_date,
-                end_date=end_date)
-            create.save()
-        else:
-            create = Event(
-                name=event_name,
-                description=description,
-                promoter=UserProfile.objects.get(id=username.id),
-                category=Category.objects.get(id=category.id),
-                venue_name=venue_name,
-                event_type=event_type,
-                performer_names=performer_names,
-                ticket_price=ticket_price,
-                ticket_quantity=ticket_quantity,
-                start_date=start_date,
-                end_date=end_date)
-            create.save()
-
-    return redirect('home')
+        return redirect('home')
+    except:
+        message = "Something went wrong while creating event."
+        return render(request, 'home.html', {'message': message})
 
 
 def promoter_view(request):
+    try:
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "p":
+                return redirect('home')
 
-    if request.user.is_authenticated:
-        query = UserProfile.objects.get(id=request.user.id)
-        if not query.user_type == "p":
-            return redirect('home')
+        events = Event.objects.filter(promoter=request.user.id)
+        if len(events) > 0:
+            return render(request, 'promoter_view.html', {'events': events, 'type': 'promoter'})
+        else:
+            message = "No events are available. Create events to see data"
+            return render(request, 'promoter_view.html', {'message': message})
+    except:
+        message = "Something went wrong while trying to view events. Try again later."
+        return render(request, 'home.html', {'message': message})
 
-    events = Event.objects.filter(promoter=request.user.id)
-    return render(request, 'promoter_view.html', {'events': events, 'type': 'promoter'})
+
 
 def delete_event(request, id):
 
@@ -442,10 +527,7 @@ def delete_promotion(request, id):
             return redirect('home')
 
     promotion = Promotion.objects.filter(id=id)
-    if promotion.promoter_id == request.user.id:
-        return render(request, 'delete_promotion.html', {'promotion': promotion})
-    else:
-        return redirect('home')
+    return render(request, 'delete_promotion.html', {'promotion': promotion})
 
 def deleted_promotion(request):
     if request.method == 'POST':

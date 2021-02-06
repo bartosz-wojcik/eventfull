@@ -1,7 +1,7 @@
+{% extends "promoter.html" %}
 {% block content %}
-    {% if user.is_authenticated  %}
-    <a href="/logout">Logout</a>
-    {% endif %}
+<br />
+<br />
 
    <h1>Create a Promotion</h1>
    <form method="post" action="{% url 'created_promotion'%}">
@@ -27,5 +27,5 @@
         <br />
         <input type="submit" value="Submit">
     </form>
-{% include "scripts.html" %}
+{% include "message.html" %}
 {% endblock  %}
