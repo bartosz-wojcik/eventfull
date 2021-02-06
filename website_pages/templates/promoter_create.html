@@ -1,22 +1,23 @@
 {% extends "promoter.html" %}
 
 {% block content %}
-<br />
-<br />
    <h1>Create an Event</h1>
    <form method="post" action="{% url 'created_event'%}">
         {% csrf_token %}
         <br />
        <label for="event-name">Event Name</label>
-        <input  type="text"  name="event-name" required>
-        <br />
+       <br />
+       <input  type="text"  name="event-name" required>
+       <br />
        <label for="event-type">Event Type</label>
+       <br />
        <select name="event-type" id="event-type" required>
              <option value="f">Free</option>
              <option value="p">Paid</option>
        </select>
        <br />
        <label for="category">Category Name</label>
+       <br />
        <select name="category-name" id="categories">
         {% for item in categories %}
              <option value="{{item.name}}">{{item.name}}</option>
@@ -24,34 +25,39 @@
        </select>
         <br />
        <label for="description">Description</label>
+       <br />
         <textarea type="text"  rows="4" cols="50" name="description" required></textarea>
-        <br />
+       <br />
        <label for="venue-name">Venue Name</label>
-        <input type="text"   name="venue-name" required>
+       <br />
+       <input type="text"   name="venue-name" required>
         <br />
        <label for="performer-names">Performer Names</label>
-        <input type="text" name="performer-names" required>
-        <br />
+       <br />
+       <input type="text" name="performer-names" required>
+       <br />
        <label for="ticket-quantity" id="ticket-quantity-label">Ticket Quantity (Max 10000)</label>
-        <input type="number"  id="ticket-quantity" name="ticket-quantity">
-        <br />
-        <label for="ticket-price" id="ticket-price-label">Ticket Price (e.g 10.00)</label>
-        <input type="de"  id="ticket-price" name="ticket-price" step=".01">
-        <br />
-        <label for="start-date">Start Date</label>
-        <input type="datetime-local" name="start-date" required>
-        <br />
+       <br />
+       <input type="number"  id="ticket-quantity" name="ticket-quantity">
+       <br />
+       <label for="ticket-price" id="ticket-price-label">Ticket Price (e.g 10.00)</label>
+       <br />
+       <input type="decimal"  id="ticket-price" name="ticket-price" step=".01">
+       <br />
+       <label for="start-date">Start Date</label>
+       <br />
+       <input type="datetime-local" name="start-date" required>
+       <br />
        <label for="end-date">End Date</label>
-        <input type="datetime-local" name="end-date" required>
-        <br />
-        <input type="submit" value="Submit">
+       <br />
+       <input type="datetime-local" name="end-date" required>
+       <br />
+       <input type="submit" value="Submit">
     </form>
 {% include "message.html" %}
-{% endblock  %}
-
 <script>
     $(document).ready(function(){
-
+    console.log('herey')
   if ($('#event-type').val() == 'f'){
     $('#ticket-quantity').hide()
     $('#ticket-price').hide()
@@ -75,3 +81,7 @@
         });
     });
 </script>
+
+{% endblock  %}
+
+

@@ -6,27 +6,42 @@
         {% csrf_token %}
         <br />
         <label for="event-name">Event Name</label>
+        <br />
         <input value="{{ item.name }}" name="event-name">
         <br />
          <label for="event-description">Description</label>
+        <br />
         <textarea rows="4" cols="50" name="description">{{ item.description }}</textarea>
         <br />
          <label for="venue-name">Venue Name</label>
+        <br />
         <input value="{{ item.venue_name }}" name="venue-name">
         <br />
-         <label for="performer-names">Performer Names</label>
+        <label for="performer-names">Performer Names</label>
+        <br />
         <input value="{{ item.performer_names }}" name="performer-names">
         <br />
-         <label for="ticket-price">Ticket Price</label>
+        {% if item.event_type == 'p' %}
+        <label for="ticket-price">Ticket Price</label>
+        <br />
         <input type="number" value="{{ item.ticket_price }}" name="ticket-price">
         <br />
         <label for="ticket-price">Ticket Quantity</label>
-        <input type="number" value="{{ item.ticket_quantity }}" name="ticket-price">
         <br />
+        <input type="decimal" value="{{ item.ticket_quantity }}" name="ticket-price">
+        <br />
+        {% else %}
+        <input type="hidden" value="{{ item.ticket_price }}" name="ticket-price">
+        <br />
+        <input type="hidden" value="{{ item.ticket_quantity }}" name="ticket-price">
+        <br />
+        {% endif %}
          <label for="start-date">Start Date</label>
+        <br />
         <input type="datetime-local" value="{{ item.start_date|date:'c' }}" name="start-date">
         <br />
-         <label for="end-date">End Date</label>
+        <label for="end-date">End Date</label>
+        <br />
         <input type="datetime-local" value="{{ item.end_date|date:'c' }}" name="end-date">
         <br />
         <input type="hidden" value="{{ item.pk }}" name="pk">

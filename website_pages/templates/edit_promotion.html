@@ -6,16 +6,19 @@
     {% for item in promotions %}
     <form method="post" action="{% url 'edited_promotion'%}">
         {% csrf_token %}
-        <br />
         <label for="event-name">Event Name: {{ item.event.name }}</label>
         <br />
+        <br />
         <label for="description">Description</label>
+        <br />
         <textarea rows="4" cols="50" name="description">{{ item.description }}</textarea>
         <br />
-         <label for="start-dat  e">Start Date</label>
+        <label for="start-dat  e">Start Date</label>
+        <br />
         <input type="datetime-local" value="{{ item.start_date|date:'c' }}" name="start-date">
         <br />
         <label for="start-date">End Date</label>
+        <br />
         <input type="datetime-local" value="{{ item.end_date|date:'c' }}" name="end-date">
         <br />
         <input type="hidden" value="{{ item.pk }}" name="pk">

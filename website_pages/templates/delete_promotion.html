@@ -1,21 +1,19 @@
 {% extends "promoter.html" %}
 {% block content %}
-<br />
-<br />
     {% for item in promotion %}
     <form method="post" action="{% url 'deleted_promotion' %}">
         {% csrf_token %}
         <p> Do you want to delete the following promotion?</p>
         <br />
-        <input value="{{ item.event.name }}" name="event-name" readonly>
+        <label>Event name: {{ item.event.name }}</label>
         <br />
-        <input value="{{ item.promo_code}}" name="promo-code" readonly>
+         <label>Promotion Code: {{ item.promo_code}}</label>
         <br />
-        <input  name="start" value="{{ item.start_date }}" readonly>
+        <label>Start Date: {{ item.start_date }}</label>
         <br />
-        <input  name="end" value="{{ item.end_date }}" readonly>
-        <br />
+        <label>End Date: {{ item.end_date }}</label>
         <input type="hidden" value="{{ item.pk }}" name="pk">
+        <br />
         <br />
         <input type="submit" value="Delete">
     </form>

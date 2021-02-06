@@ -1,31 +1,35 @@
 {% extends "promoter.html" %}
 {% block content %}
-<br />
-<br />
 
    <h1>Create a Promotion</h1>
    <form method="post" action="{% url 'created_promotion'%}">
         {% csrf_token %}
        <label for="event-name">Event Name</label>
+       <br />
        <select name="event-name" id="event-name">
         {% for item in events %}
              <option value="{{item.name}}">{{item.name}}</option>
         {% endfor %}
        </select>
-        <br />
+       <br />
        <label for="description">Description</label>
-        <textarea type="text"  rows="4" cols="50" name="description" required></textarea>
-        <br />
+       <br />
+       <textarea type="text"  rows="4" cols="50" name="description" required></textarea>
+       <br />
        <label for="promo-code">Promo Code</label>
-        <input type="text" name="promotion-code" required maxlength="8">
-        <br />
-        <label for="start-date">Start Date</label>
-        <input type="datetime-local" name="start-date" required>
-        <br />
+       <br />
+       <input type="text" name="promotion-code" required maxlength="8">
+       <br />
+       <label for="start-date">Start Date</label>
+       <br />
+       <input type="datetime-local" name="start-date" required>
+       <br />
        <label for="end-date">End Date</label>
-        <input type="datetime-local" name="end-date" required>
-        <br />
-        <input type="submit" value="Submit">
+       <br />
+       <input type="datetime-local" name="end-date" required>
+       <br />
+       <br />
+       <input type="submit" value="Submit">
     </form>
 {% include "message.html" %}
 {% endblock  %}
