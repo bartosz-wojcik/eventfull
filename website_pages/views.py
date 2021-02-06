@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate, login as dj_login
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_protect
 from website_pages.forms import CustomUserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
 from website_pages.models import Event, UserProfile, Category, Promotion, WishList
 
 """
@@ -56,10 +58,11 @@ def home(request):
                 if 'venue-name' in request.POST and request.POST['venue-name'] != "":
                     events = events.filter(venue_name__icontains=request.POST['venue-name'])
 
-                if 'event-type' in request.POST and request.POST['event-type'] != "":
+                if 'event-type' in request.POST and request.POST['event-type'] != "" and\
+                        request.POST['event-type'] != "a":
                     events = events.filter(event_type=request.POST['event-type'])
 
-                if 'category-name' in request.POST and len(events) > 0:
+                if 'category-name' in request.POST and len(events) > 0 and request.POST['category-name'] != "all":
                     category = Category.objects.get(name=request.POST['category-name'])
                     events = events.filter(category_id=category.id)
 
@@ -217,11 +220,23 @@ def unlike_event(request):
 
 def change_password(request):
     """
-    incomplete. Server setup and issues associated with that cost me wayyyyyyyy to much time :(.
+    this function allows the user to change their password. User will be presented a change password page
+    Upon updating password, they will remain logged in and be redirected back to their profile
     :param request:
-    :return:
+    :return: change password page for user
     """
-    return HttpResponse("Change your password!")
+    try:
+        if request.method == 'POST':
+            form = PasswordChangeForm(data=request.POST, user=request.user)
+            if form.is_valid():
+                form.save()
+                update_session_auth_hash(request, form.user)
+                return redirect('profile')
+        else:
+            form = PasswordChangeForm(user=request.user)
+            return render(request, 'change_password.html', {'form': form})
+    except:
+        return render(request, 'promoter.html', {'form': form})
 
 
 def edit_profile(request):

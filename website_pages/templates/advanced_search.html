@@ -1,38 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
+<br />
  <h1>Advanced Search</h1>
-
-{% include "message.html" %}
-
     <form method="POST" action="/">
         {% csrf_token %}
         <label for="event-name">Event Name</label>
+        <br />
         <input type="text" name="event-name" >
         <br />
         <label for="venue-name">Venue Name</label>
+        <br />
         <input type="text" name="venue-name" >
           <br />
         <label for="category">Category</label>
+        <br />
         <select name="category-name" id="categories" >
+            <option value="all">All</option>
             {% for item in categories %}
              <option value="{{item.name}}">{{item.name}}</option>
             {% endfor %}
        </select>
         <br />
         <label for="event-type">Event Type</label>
+        <br />
         <select name="event-type" id="event-type" >
+            `<option value="a">All</option>
              <option value="f">Free</option>
              <option value="p">Paid</option>
        </select>
-          <br />
+        <br />
         <label for="start-date">Start Date</label>
+        <br />
         <input type="date" name="start-date" >
         <br />
        <label for="end-date">End Date</label>
+        <br />
         <input type="date" name="end-date" >
         <br />
         <input type="hidden" name="type" value="advanced" >
         <button type="submit">Search</button>
     </form>
+
+{% include "message.html" %}
 {% endblock %}
