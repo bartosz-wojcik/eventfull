@@ -13,7 +13,8 @@
         <a href="/view_promotion">View Promotions</a>
         <a href="/create_promotion">Create Promotion</a>
         <a href="/logout">Logout</a>
-    </div>
+        <p>Logged in as: {{ user.get_username }}</p>
+        </div>
 
 {% include "message.html" %}
 {% include "scripts.html" %}

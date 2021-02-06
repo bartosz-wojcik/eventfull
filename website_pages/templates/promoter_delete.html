@@ -8,11 +8,11 @@
         {% csrf_token %}
         <p> Do you want to delete the following event?</p>
         <br />
-        <input value="{{ item.name }}" value="{{ item.name }}" name="event-name" readonly>
+        <label>Event Name: {{ item.name }}</label>
          <br />
-        <input  name="start" value="{{ item.start_date }}" readonly>
+        <label>Start Date: {{ item.start_date }}</label>
          <br />
-        <input  name="end" value="{{ item.end_date }}" readonly>
+        <label>End Date: {{ item.end_date }}</label>
         <br />
         <input type="hidden" value="{{ item.pk }}" name="pk">
          <br />

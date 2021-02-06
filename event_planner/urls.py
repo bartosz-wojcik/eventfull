@@ -40,7 +40,7 @@ urlpatterns = [
     path('promoter/', promoter, name='promoter'),
     path('create_event/', create_event, name='create_event'),
     path('created_event/', created_event, name='created_event'),
-    path('promoter_view', promoter_view),
+    path('promoter_view', promoter_view, name='promoter_view'),
     path('delete_event/<int:id>', delete_event, name='delete_event'),
     path('deleted_event/', deleted_event, name='deleted_event'),
     path('edit_event/<int:id>/', edit_event, name='edit_event'),
@@ -55,10 +55,11 @@ urlpatterns = [
 ]
 
 
+# butler used to server files on server
 def _static_butler(request, path, **kwargs):
     return serve_static(request, path, insecure=True, **kwargs)
 
-
+# if not in debug mode, add path to static files
 if not settings.DEBUG:
     urlpatterns += [
         re_path(r'static/(.+)', _static_butler)

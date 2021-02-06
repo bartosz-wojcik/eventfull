@@ -49,7 +49,7 @@ def home(request):
         # retrieve all events and if parameters are present, filter those parameters in the events query
         if request.POST["type"] == 'advanced':
             try:
-                events = Event.objects.all()
+                events = Event.objects.all().order_by('start_date')
                 # check to see if paramter exists and is not empty, then filter it in query
                 if 'event-name' in request.POST and request.POST['event-name'] != "":
 
@@ -71,6 +71,7 @@ def home(request):
 
                 if 'end-date' in request.POST and request.POST['end-date'] != "":
                     events = events.filter(end_date=request.POST['end-date'])
+
 
                 if len(events) > 0:
                     return render(request, 'home.html', {'events': events, 'type': 'user'})
@@ -107,7 +108,7 @@ def home(request):
         # with events not yet liked
         if query.user_type == "u":
             try:
-                events = Event.objects.all()
+                events = Event.objects.all().order_by('start_date')
                 wishlist = WishList.objects.filter(user_id=request.user.id)
                 for item in wishlist:
                     events = events.exclude(name=item.event.name)
@@ -123,11 +124,11 @@ def home(request):
     else:
         # else show all events in database
         try:
-            events = Event.objects.all()
+            events = Event.objects.all().order_by('start_date')
             if len(events) > 0:
                 return render(request, 'home.html', {'events': events, 'type': 'user'})
             else:
-                message = 'Events cannot be loaded'
+                message = 'There are currently no events.'
                 return render(request, 'home.html', {'message': message})
         except:
             message = 'Events cannot be loaded'
@@ -141,7 +142,7 @@ def advanced_search(request):
     :return: advanced search page along with categories for selection input, else return message
     """
     try:
-        categories = Category.objects.all()
+        categories = Category.objects.all().order_by('name')
         if len(categories) > 0:
             return render(request, 'advanced_search.html', {'categories': categories})
         else:
@@ -222,16 +223,21 @@ def change_password(request):
     """
     this function allows the user to change their password. User will be presented a change password page
     Upon updating password, they will remain logged in and be redirected back to their profile
-    :param request:
+    :param request: used for user information and retrieving parameters
     :return: change password page for user
     """
     try:
         if request.method == 'POST':
+            # get create form template with data and usre
             form = PasswordChangeForm(data=request.POST, user=request.user)
+            # if the form is filled out correctly
+            # save form
+            # update session for user
             if form.is_valid():
                 form.save()
                 update_session_auth_hash(request, form.user)
                 return redirect('profile')
+        # else show password change form to user to fill out
         else:
             form = PasswordChangeForm(user=request.user)
             return render(request, 'change_password.html', {'form': form})
@@ -378,7 +384,7 @@ def promoter(request):
             return redirect('home')
     except:
         message = "Something went wrong while loading the promoter page. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def create_event(request):
@@ -398,7 +404,7 @@ def create_event(request):
         return render(request, 'promoter_create.html', {'categories': categories})
     except:
         message = "Something went wrong while creating user"
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def created_event(request):
@@ -456,10 +462,10 @@ def created_event(request):
                     end_date=end_date)
                 create.save()
 
-        return redirect('home')
+        return redirect('promoter_view')
     except:
-        message = "Something went wrong while creating event."
-        return render(request, 'home.html', {'message': message})
+        message = "Something went wrong while creating event. Try again later."
+        return render(request, 'promoter.html', {'message': message})
 
 
 def promoter_view(request):
@@ -475,7 +481,7 @@ def promoter_view(request):
             if not query.user_type == "p":
                 return redirect('home')
 
-        events = Event.objects.filter(promoter=request.user.id)
+        events = Event.objects.filter(promoter=request.user.id).order_by('start_date')
         if len(events) > 0:
             return render(request, 'promoter_view.html', {'events': events, 'type': 'promoter'})
         else:
@@ -483,7 +489,7 @@ def promoter_view(request):
             return render(request, 'promoter_view.html', {'message': message})
     except:
         message = "Something went wrong while trying to view events. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def delete_event(request, id):
@@ -504,7 +510,7 @@ def delete_event(request, id):
         return render(request, 'promoter_delete.html', {'events': events, 'type': 'edit'})
     except:
         message = "Something went wrong while trying to load delete events page. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def deleted_event(request):
@@ -517,10 +523,10 @@ def deleted_event(request):
         if request.method == 'POST':
             id = request.POST["pk"]
             Event.objects.filter(id=id).delete()
-        return redirect('home')
+        return redirect('promoter_view')
     except:
         message = "Something went wrong when trying to delete event. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def edit_event(request, id):
@@ -540,7 +546,7 @@ def edit_event(request, id):
         return render(request, 'promoter_edit.html', {'events': events, 'type': 'edit'})
     except:
         message = "Something went wrong while loading edit event page. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 @csrf_protect
 def edited_event(request):
@@ -557,6 +563,7 @@ def edited_event(request):
             venue_name = request.POST["venue-name"]
             performer_names = request.POST["performer-names"]
             ticket_price = request.POST["ticket-price"]
+            ticket_quantity = request.POST["ticket-quantity"]
             start_date = request.POST["start-date"]
             end_date = request.POST["end-date"]
 
@@ -567,13 +574,14 @@ def edited_event(request):
             update.venue_name = venue_name
             update.performer_names = performer_names
             update.ticket_price = ticket_price
+            update.ticket_quantity = ticket_quantity
             update.start_date = start_date
             update.end_date = end_date
             update.save()
-        return redirect('home')
+        return redirect('promoter_view')
     except:
         message = "Something went wrong while updating the event. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def delete_promotion(request, id):
@@ -594,7 +602,7 @@ def delete_promotion(request, id):
         return render(request, 'delete_promotion.html', {'promotion': promotion})
     except:
         message = "Something went wrong while loading delete promotion page. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def deleted_promotion(request):
@@ -607,10 +615,10 @@ def deleted_promotion(request):
         if request.method == 'POST':
             id = request.POST["pk"]
             Promotion.objects.filter(id=id).delete()
-        return redirect('home')
+        return redirect('view_promotion')
     except:
         message = "Something went wrong while tyring to delete promotion. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def create_promotion(request):
@@ -630,7 +638,7 @@ def create_promotion(request):
         return render(request, 'create_promotion.html', {'events': events})
     except:
         message = "Something went wrong while tyring to load create promotion page. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def created_promotion(request):
@@ -661,10 +669,10 @@ def created_promotion(request):
 
             create.save()
 
-        return redirect('home')
+        return redirect('view_promotion')
     except:
         message = "Something went wrong while creating the promotion. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def view_promotions(request):
@@ -680,7 +688,7 @@ def view_promotions(request):
             if not query.user_type == "p":
                 return redirect('home')
 
-        promotions = Promotion.objects.filter(promoter_id=request.user.id)
+        promotions = Promotion.objects.filter(promoter_id=request.user.id).order_by('start_date')
         if len(promotions) > 0:
             return render(request, 'view_promotion.html', {'promotions': promotions})
         else:
@@ -688,7 +696,7 @@ def view_promotions(request):
             return render(request, 'view_promotion.html', {'message': message})
     except:
         message = "Something went wrong while trying load view promotions page. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def edit_promotions(request, id):
@@ -715,7 +723,7 @@ def edit_promotions(request, id):
             return redirect('home')
     except:
         message = "Something went wrong while trying load edit promotions page. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 def edited_promotions(request):
@@ -738,10 +746,10 @@ def edited_promotions(request):
             update.start_date = start_date
             update.save()
 
-            return redirect('home')
+            return redirect('view_promotion')
     except:
         message = "Something went wrong while editing the promotion. Try again later."
-        return render(request, 'home.html', {'message': message})
+        return render(request, 'promoter.html', {'message': message})
 
 
 

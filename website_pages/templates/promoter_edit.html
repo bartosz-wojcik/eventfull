@@ -1,10 +1,10 @@
 {% extends "promoter.html" %}
 
 {% block content %}
+    <h1>Edit Event</h1>
     {% for item in events %}
     <form method="post" action="{% url 'edited_event'%}">
         {% csrf_token %}
-        <br />
         <label for="event-name">Event Name</label>
         <br />
         <input value="{{ item.name }}" name="event-name">
@@ -24,16 +24,16 @@
         {% if item.event_type == 'p' %}
         <label for="ticket-price">Ticket Price</label>
         <br />
-        <input type="number" value="{{ item.ticket_price }}" name="ticket-price">
+        <input type="decimal" value="{{ item.ticket_price }}" name="ticket-price">
         <br />
         <label for="ticket-price">Ticket Quantity</label>
         <br />
-        <input type="decimal" value="{{ item.ticket_quantity }}" name="ticket-price">
+        <input type="number" value="{{ item.ticket_quantity }}" name="ticket-quantity">
         <br />
         {% else %}
         <input type="hidden" value="{{ item.ticket_price }}" name="ticket-price">
         <br />
-        <input type="hidden" value="{{ item.ticket_quantity }}" name="ticket-price">
+        <input type="hidden" value="{{ item.ticket_quantity }}" name="ticket-quantity">
         <br />
         {% endif %}
          <label for="start-date">Start Date</label>
