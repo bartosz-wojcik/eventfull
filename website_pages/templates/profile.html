@@ -51,7 +51,6 @@
 
       $('table a').click(function(e){
             if($(this).attr("type") == "unlike"){
-            e.preventDefault();
              item = $(this)
              item.hide();
             $.ajax({
