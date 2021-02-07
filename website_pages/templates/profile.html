@@ -49,10 +49,11 @@
 <script>
     $(document).ready(function(){
 
-      $('table a').click(function(){
-
+      $('table a').click(function(e){
             if($(this).attr("type") == "unlike"){
+            e.preventDefault();
              item = $(this)
+             item.hide();
             $.ajax({
             type: 'GET',
             url: "{% url 'unlike_event' %}",

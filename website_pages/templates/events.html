@@ -65,10 +65,11 @@
 <script>
     $(document).ready(function(){
 
-      $('table a').click(function(){
-
+      $('table a').click(function(e){
+            e.preventDefault();
             if($(this).attr("type") == "like"){
              item = $(this)
+             item.hide();
               $.ajax({
             type: 'GET',
             url: "{% url 'like_event' %}",
