@@ -22,7 +22,7 @@
         <br />
         <input value="{{ event.performer_names }}" name="performer-names">
         <br />
-        {% if item.event_type == 'p' %}
+        {% if event.event_type == 'p' %}
         <label for="ticket-price">Ticket Price</label>
         <br />
         <input type="decimal" value="{{ event.ticket_price }}" name="ticket-price">

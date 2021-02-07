@@ -8,7 +8,7 @@
 
 
 
-<table class="table" style="text-align:center;">
+<table class="table table-striped table-bordered" style="text-align:center; margin-top: 10px;">
     <tr>
         <th>Event</th>
         <th>Description</th>
@@ -19,12 +19,12 @@
         <th>Start Date</th>
         <th>End Date</th>
     </tr>
-    {% for item in wishlist %}
+    {% for item in events %}
     <tr>
-        <td>{{ item.event.name }}</td>
-        <td>{{ item.event.description }}</td>
-        <td>{{ item.event.venue_name }}</td>
-        <td>{{ item.event.performer_names }}</td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.venue_name }}</td>
+        <td>{{ item.performer_names }}</td>
         <td>{{ item.category.name }}</td>
 
         {% if item.event.event_type == 'f'  %}
@@ -33,11 +33,11 @@
         <td>Buy tickets</td>
         {% endif %}
 
-        <td>{{ item.event.start_date }}</td>
-        <td>{{ item.event.end_date }}</td>
+        <td>{{ item.start_date }}</td>
+        <td>{{ item.end_date }}</td>
 
         {% if user.is_authenticated %}
-        <td><a href="#" event="{{ item.event.id }}" id="wishlist-{{ item.pk }}" type="unlike">Unlike</a></td>
+        <td><a href="#" onClick="return false;" event="{{ item.id }}" id="wishlist-{{ item.pk }}" type="unlike">Unlike</a></td>
          {% endif  %}
     </tr>
     {% endfor %}
@@ -48,6 +48,10 @@
 
 <script>
     $(document).ready(function(){
+
+       $('a[href="#"]').click(function(event){
+        event.preventDefault();
+       });
 
       $('table a').click(function(e){
             if($(this).attr("type") == "unlike"){

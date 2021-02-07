@@ -183,8 +183,10 @@ def profile(request):
                 return redirect('home')
 
             wishlist = WishList.objects.filter(user_id=request.user.id)
-            if len(wishlist) > 0:
-                return render(request, 'profile.html', {'wishlist': wishlist, 'user_id': request.user.id})
+            events = Event.objects.filter(pk__in=[row.event_id for row in wishlist])
+
+            if len(events) > 0:
+                return render(request, 'profile.html', {'events': events, 'user_id': request.user.id})
             else:
                 message = 'No events in your wishlist'
                 return render(request, 'profile.html', {'message': message, 'user_id': request.user.id})
@@ -536,6 +538,8 @@ def delete_event(request, id):
 def deleted_event(request):
     """
     this function deletes a event from the database
+    I feel like whenever an event is deleted, all promotions tied with that event should be deleted as well.
+    Although there may be purpose to retain them for future reference.
     :param request: used for user information and retrieving parameters
     :return: returns the promoter to home after deleting
     """

@@ -55,7 +55,7 @@
         <td>{{ item.end_date }}</td>
 
         {% if user.is_authenticated %}
-        <td><a href="#" event="{{ item.pk }}" id="wishlist-{{ item.pk }}" type="like">Like</a></td>
+        <td><a href="#" onClick="return false;" event="{{ item.pk }}" id="wishlist-{{ item.pk }}" type="like">Like</a></td>
          {% endif  %}
     </tr>
     {% endfor %}
@@ -64,6 +64,10 @@
 
 <script>
     $(document).ready(function(){
+
+       $('a[href="#"]').click(function(event){
+        event.preventDefault();
+       });
 
       $('table a').click(function(e){
             if($(this).attr("type") == "like"){
