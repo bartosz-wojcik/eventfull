@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Eventfull - Promoter Portal</title>
+
 </head>
 <body>
+<style>
+a:link {
+  text-decoration: none;
+}
+</style>
 <div class="container">
     <h1><a href="/">Eventfull - Promoter Portal</a></h1>
-        <div class="container">
+    <br />
+    <div class="container">
         <a href="/promoter_view">View Events</a>
         <a href="/create_event">Create Event</a>
         <a href="/view_promotion">View Promotions</a>
@@ -15,7 +22,7 @@
         <a href="/change_password">Change Password</a>
         <a href="/logout">Logout</a>
         <p>Logged in as: {{ user.get_username }}</p>
-        </div>
+    </div>
 
 {% include "message.html" %}
 {% include "scripts.html" %}

@@ -666,7 +666,11 @@ def create_promotion(request):
                 return redirect('home')
 
         events = Event.objects.filter(promoter_id=request.user.id)
-        return render(request, 'create_promotion.html', {'events': events})
+        if len(events)>0:
+            return render(request, 'create_promotion.html', {'events': events})
+        else:
+            message = "No promotions can be created. Create an event first."
+            return render(request, 'promoter.html', {'message': message})
     except:
         message = "Something went wrong while tyring to load create promotion page. Try again later."
         return render(request, 'promoter.html', {'message': message})
@@ -725,7 +729,7 @@ def view_promotions(request):
         if len(promotions) > 0:
             return render(request, 'view_promotion.html', {'promotions': promotions})
         else:
-            message = "There are no promotions to view. Create some promotions!"
+            message = "There are no promotions to view."
             return render(request, 'view_promotion.html', {'message': message})
     except:
         message = "Something went wrong while trying load view promotions page. Try again later."
