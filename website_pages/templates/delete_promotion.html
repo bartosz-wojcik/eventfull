@@ -2,24 +2,24 @@
 {% block content %}
     <h1>Delete Promotion</h1>
     <br />
-    {% for item in promotion %}
+    {% if promotion %}
     <form method="post" action="{% url 'deleted_promotion' %}">
         {% csrf_token %}
         <p> Do you want to delete the following promotion?</p>
         <br />
-        <label>Event name: {{ item.event.name }}</label>
+        <label>Event name: {{ promotion.event.name }}</label>
         <br />
-         <label>Promotion Code: {{ item.promo_code}}</label>
+         <label>Promotion Code: {{ promotion.promo_code}}</label>
         <br />
-        <label>Start Date: {{ item.start_date }}</label>
+        <label>Start Date: {{ promotion.start_date }}</label>
         <br />
-        <label>End Date: {{ item.end_date }}</label>
-        <input type="hidden" value="{{ item.pk }}" name="pk">
+        <label>End Date: {{ promotion.end_date }}</label>
+        <input type="hidden" value="{{ promotion.pk }}" name="pk">
         <br />
         <br />
         <input type="submit" value="Delete">
     </form>
-    {% endfor %}
+    {% endif %}
 
 {% include "message.html" %}
 <script>

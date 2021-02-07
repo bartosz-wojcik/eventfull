@@ -523,8 +523,11 @@ def delete_event(request, id):
             if not query.user_type == "p":
                 return redirect('home')
 
-        events = Event.objects.filter(id=id)
-        return render(request, 'promoter_delete.html', {'events': events, 'type': 'edit'})
+        event = Event.objects.get(id=id)
+        if event.promoter_id == request.user.id:
+            return render(request, 'promoter_delete.html', {'event': event})
+        else:
+            return redirect('home')
     except:
         message = "Something went wrong while trying to load delete events page. Try again later."
         return render(request, 'promoter.html', {'message': message})
@@ -559,8 +562,11 @@ def edit_event(request, id):
             if not query.user_type == "p":
                 return redirect('home')
 
-        events = Event.objects.filter(id=id)
-        return render(request, 'promoter_edit.html', {'events': events, 'type': 'edit'})
+        event = Event.objects.get(id=id)
+        if event.promoter_id == request.user.id:
+            return render(request, 'promoter_edit.html', {'event': event})
+        else:
+            return redirect('home')
     except:
         message = "Something went wrong while loading edit event page. Try again later."
         return render(request, 'promoter.html', {'message': message})
@@ -615,8 +621,12 @@ def delete_promotion(request, id):
             if not query.user_type == "p":
                 return redirect('home')
 
-        promotion = Promotion.objects.filter(id=id)
-        return render(request, 'delete_promotion.html', {'promotion': promotion})
+        promotion = Promotion.objects.get(id=id)
+
+        if promotion.promoter_id == request.user.id:
+            return render(request, 'delete_promotion.html', {'promotion': promotion})
+        else:
+            return redirect('home')
     except:
         message = "Something went wrong while loading delete promotion page. Try again later."
         return render(request, 'promoter.html', {'message': message})
@@ -732,7 +742,6 @@ def edit_promotions(request, id):
             if not query.user_type == "p":
                 return redirect('home')
 
-        # check to see if promoter is owner of the promotion
         promotions = Promotion.objects.get(id=id)
         # check if promoter is owner of promotion being edited
         if promotions.promoter_id == request.user.id:
