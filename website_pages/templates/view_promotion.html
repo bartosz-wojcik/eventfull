@@ -7,6 +7,8 @@
     <table class="table table-striped table-bordered" style="text-align:center; margin-top: 10px;">
     <tr>
         <th>Event Name</th>
+        <th>Description</th>
+        <th>Promo Code</th>
         <th>Start Date</th>
         <th>End Date</th>
 
@@ -14,6 +16,8 @@
     {% for item in promotions %}
     <tr>
         <td>{{ item.event.name }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.promo_code }}</td>
         <td>{{ item.start_date }}</td>
         <td>{{ item.end_date }}</td>
         <td><a href="/edit_promotion/{{ item.pk }}" >Edit</a></td>

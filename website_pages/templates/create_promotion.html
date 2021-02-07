@@ -6,9 +6,9 @@
         {% csrf_token %}
        <label for="event-name">Event Name</label>
        <br />
-       <select name="event-name" id="event-name">
+       <select name="event-name" id="event-name" >
         {% for item in events %}
-             <option value="{{item.name}}">{{item.name}}</option>
+             <option value="{{item.name}}-{{item.pk}}">{{item.name}}</option>
         {% endfor %}
        </select>
        <br />
@@ -32,4 +32,14 @@
        <input type="submit" value="Submit">
     </form>
 {% include "message.html" %}
+<script>
+    $(document).ready(function(){
+
+        $(
+
+
+    });
+</script>
+
+
 {% endblock  %}

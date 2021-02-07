@@ -669,12 +669,14 @@ def created_promotion(request):
             username = request.user
 
             event_name = request.POST["event-name"]
+            event_name = event_name.split('-')
+            event_id = event_name[-1]
             description = request.POST["description"]
             promotion_code = request.POST["promotion-code"]
             start_date = request.POST["start-date"]
             end_date = request.POST["end-date"]
 
-            event = Event.objects.get(name=event_name)
+            event = Event.objects.get(id=event_id)
 
             create = Promotion(
                 promo_code=promotion_code,
