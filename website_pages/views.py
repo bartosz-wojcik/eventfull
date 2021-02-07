@@ -66,17 +66,17 @@ def home(request):
                 if 'category-name' in request.POST and len(events) > 0 and request.POST['category-name'] != "all":
                     category = Category.objects.get(name=request.POST['category-name'])
                     events = events.filter(category_id=category.id)
-                # if both start date and end date have a value, check in range for eventes
+                # if both start date and end date have a value, check in range for events
                 if 'start-date' in request.POST and request.POST['start-date'] != "" and 'end-date' in request.POST and\
                         request.POST['end-date'] != "":
                     events = events.filter(end_date__range=[request.POST['start-date'], request.POST['end-date']])
                 # else filter them separate
                 else:
                     if 'start-date' in request.POST and request.POST['start-date'] != "":
-                        events = events.filter(start_date=request.POST['start-date'])
+                        events = events.filter(start_date__date=request.POST['start-date'])
 
                     if 'end-date' in request.POST and request.POST['end-date'] != "":
-                        events = events.filter(end_date=request.POST['end-date'])
+                        events = events.filter(end_date__date=request.POST['end-date'])
 
 
                 if len(events) > 0:
