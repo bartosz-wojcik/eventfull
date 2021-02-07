@@ -1,8 +1,8 @@
 {% extends "promoter.html" %}
 
 {% block content %}
-<br />
-<br />
+    <h1>Delete Event</h1>
+    <br />
     {% for item in events %}
     <form method="post" action="{% url 'deleted_event'%}">
         {% csrf_token %}

@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<br />
-<br />
+
+    <h1>Delete Profile</h1>
+    <br />
     <form method="post" action="{% url 'deleted_profile'%}">
         {% csrf_token %}
         <p> Are you sure you want to delete your account {{ user_profile.username }}?</p>
+        <p>This action will permanently delete your account.</p>
         <br />
         <input type="hidden" value="{{ user_profile.pk }}" name="pk">
          <br />

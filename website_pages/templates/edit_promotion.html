@@ -1,8 +1,8 @@
 {% extends "promoter.html" %}
 
-<br />
-<br />
 {% block content %}
+    <h1>Edit Promotions</h1>
+    <br />
     {% for item in promotions %}
     <form method="post" action="{% url 'edited_promotion'%}">
         {% csrf_token %}

@@ -49,6 +49,7 @@ def home(request):
         # retrieve all events and if parameters are present, filter those parameters in the events query
         if request.POST["type"] == 'advanced':
             try:
+
                 events = Event.objects.all().order_by('start_date')
                 # check to see if paramter exists and is not empty, then filter it in query
                 if 'event-name' in request.POST and request.POST['event-name'] != "":
@@ -65,12 +66,17 @@ def home(request):
                 if 'category-name' in request.POST and len(events) > 0 and request.POST['category-name'] != "all":
                     category = Category.objects.get(name=request.POST['category-name'])
                     events = events.filter(category_id=category.id)
+                # if both start date and end date have a value, check in range for eventes
+                if 'start-date' in request.POST and request.POST['start-date'] != "" and 'end-date' in request.POST and\
+                        request.POST['end-date'] != "":
+                    events = events.filter(end_date__range=[request.POST['start-date'], request.POST['end-date']])
+                # else filter them separate
+                else:
+                    if 'start-date' in request.POST and request.POST['start-date'] != "":
+                        events = events.filter(start_date=request.POST['start-date'])
 
-                if 'start-date' in request.POST and request.POST['start-date'] != "":
-                    events = events.filter(start_date=request.POST['start-date'])
-
-                if 'end-date' in request.POST and request.POST['end-date'] != "":
-                    events = events.filter(end_date=request.POST['end-date'])
+                    if 'end-date' in request.POST and request.POST['end-date'] != "":
+                        events = events.filter(end_date=request.POST['end-date'])
 
 
                 if len(events) > 0:
@@ -86,6 +92,11 @@ def home(request):
         # and show filtered events to user
         elif request.POST["type"] == 'search':
             try:
+                if request.user.is_authenticated:
+                    query = UserProfile.objects.get(id=request.user.id)
+                    if not query.user_type == "u":
+                        return redirect('home')
+
                 query = request.POST.get('event-name', None)
                 events = Event.objects.filter(name__icontains=query)
                 if len(events) > 0:
@@ -126,6 +137,7 @@ def home(request):
         try:
             events = Event.objects.all().order_by('start_date')
             if len(events) > 0:
+
                 return render(request, 'home.html', {'events': events, 'type': 'user'})
             else:
                 message = 'There are currently no events.'
@@ -142,6 +154,11 @@ def advanced_search(request):
     :return: advanced search page along with categories for selection input, else return message
     """
     try:
+        if request.user.is_authenticated:
+            query = UserProfile.objects.get(id=request.user.id)
+            if not query.user_type == "u":
+                return redirect('home')
+
         categories = Category.objects.all().order_by('name')
         if len(categories) > 0:
             return render(request, 'advanced_search.html', {'categories': categories})
@@ -170,7 +187,7 @@ def profile(request):
                 return render(request, 'profile.html', {'wishlist': wishlist, 'user_id': request.user.id})
             else:
                 message = 'No events in your wishlist'
-                return render(request, 'profile.html', {'message': message})
+                return render(request, 'profile.html', {'message': message, 'user_id': request.user.id})
         else:
             return redirect('home')
     except:
